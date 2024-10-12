@@ -13,7 +13,7 @@ import { LocalStrategy } from './strategies/local.strategy';
   imports: [
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: process.env.JWT_EXPIRATION || '30d' },
     }),
     MikroOrmModule.forFeature([User]),
   ],

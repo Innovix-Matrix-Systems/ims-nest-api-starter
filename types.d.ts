@@ -27,3 +27,18 @@ interface ValidateUserResponse {
   user: any;
   errors: string[];
 }
+
+interface LoginResponse {
+  id: number;
+  name: string;
+  email: string;
+  isActive: boolean;
+  createdAt: Date;
+  device?: string;
+  AccessToken: string;
+}
+
+interface JwtEncodeData {
+  email: string;
+  sub: number;
+}

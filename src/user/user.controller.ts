@@ -14,11 +14,11 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { BaseController } from 'src/common/controllers/base.controller';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { ValidationExceptionFilter } from '../filters/validation-exception.filter';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController extends BaseController {
@@ -74,6 +74,9 @@ export class UserController extends BaseController {
   @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const user = await this.userService.findOne(+id);
+    if (!user) {
+      return this.sendErrorResponse('user not found', [], 404, res);
+    }
     return this.sendSuccessResponse(
       user,
       'User fetched successfully',

@@ -48,11 +48,17 @@ export class AuthService {
     };
   }
 
-  async login(user: User) {
-    console.log('logged in USer', user);
-    const payload = { email: user.email, sub: user.id };
+  async login(user: User): Promise<LoginResponse> {
+    const payload: JwtEncodeData = { email: user.email, sub: user.id };
+    await this.userService.update(user.id, { lastLoginAt: new Date() });
+    const token = this.jwtService.sign(payload);
     return {
-      access_token: this.jwtService.sign(payload),
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      isActive: user.isActive,
+      createdAt: user.createdAt,
+      AccessToken: token,
     };
   }
 }

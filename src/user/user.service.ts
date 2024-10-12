@@ -78,7 +78,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<Partial<User> | null> {
     const user = await this.userRepository.findOne({ email });
-    return user;
+    return user; // not need to call instanceToPlain as we need password in response
   }
 
   // Update user by ID
