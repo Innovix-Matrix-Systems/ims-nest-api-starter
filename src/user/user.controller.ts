@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  // ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -41,13 +40,23 @@ export class UserController extends BaseController {
   async findAll(
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('perPage', ParseIntPipe) perPage: number = 10,
-    // @Query('search') search: string = '',
-    // @Query('isActive', ParseBoolPipe) isActive: boolean = true,
+    @Query('search') search: string = '',
+    @Query('isActive') isActive: boolean,
     @Res() res: Response,
   ) {
-    // const searchFields = ['name', 'email'];
-    // const selectFields = ['isActive'];
-    const users = await this.userService.findAll(page, perPage, '/user');
+    const searchFields = ['name', 'email'];
+    const selectFields = [];
+    if (isActive !== undefined) {
+      selectFields.push({ isActive: isActive });
+    }
+    const params: PaginatedParams = {
+      page,
+      perPage,
+      search,
+      searchFields,
+      selectFields,
+    };
+    const users = await this.userService.findAll(params);
     return this.sendPaginatedResponse(
       users.data,
       users.meta,
@@ -69,6 +78,7 @@ export class UserController extends BaseController {
   }
 
   @Patch(':id')
+  @UseFilters(ValidationExceptionFilter)
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,

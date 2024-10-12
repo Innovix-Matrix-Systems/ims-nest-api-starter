@@ -1,10 +1,9 @@
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
 import { User } from 'src/entities/user.entity';
 import { PasswordService } from 'src/misc/password.service';
-import { getPaginationLinks } from '../utils/helper';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -32,30 +31,35 @@ export class UserService {
   }
 
   // Find all users
-  async findAll(
-    page: number,
-    limit: number,
-    reqPath: string,
-  ): Promise<UserPaginatedList> {
-    const [users, totalCount] = await this.userRepository.findAndCount(
-      {},
-      {
-        limit: limit,
-        offset: (page - 1) * limit,
-      },
-    );
+  async findAll(params: PaginatedParams): Promise<UserPaginatedList> {
+    const { page, perPage, search, searchFields, selectFields } = params;
+    const where: any = {};
+    //map search fields
+    if (search && searchFields && searchFields.length > 0) {
+      where.$or = searchFields.map((field) => ({
+        [field]: { $ilike: `%${search}%` }, //case-insensitive partial match
+      }));
+    }
+    // map filters
+    if (selectFields && selectFields.length > 0) {
+      selectFields.forEach((field) => {
+        Object.assign(where, field);
+      });
+    }
+    const [users, totalCount] = await this.userRepository.findAndCount(where, {
+      limit: perPage,
+      offset: (page - 1) * perPage,
+    });
     const mappedUsers = users.map((user) => instanceToPlain(user));
-    const totalPages = Math.ceil(totalCount / limit);
-    const from = (page - 1) * limit + 1;
-    const to = Math.min(page * limit, totalCount);
+    const totalPages = Math.ceil(totalCount / perPage);
+    const from = (page - 1) * perPage + 1;
+    const to = Math.min(page * perPage, totalCount);
 
     const pageData = {
       currentPage: page,
       from: from,
       lastPage: totalPages,
-      links: getPaginationLinks(page, totalPages, reqPath),
-      path: reqPath,
-      perPage: limit,
+      perPage: perPage,
       to: to,
       total: totalCount,
     };
@@ -81,10 +85,10 @@ export class UserService {
   async update(
     id: number,
     updateUserDto: UpdateUserDto,
-  ): Promise<Partial<User> | null> {
+  ): Promise<Partial<User>> {
     const user = await this.userRepository.findOne(id);
     if (!user) {
-      return null;
+      throw new NotFoundException('User not found');
     }
     this.userRepository.assign(user, updateUserDto);
     await this.em.flush();
@@ -95,9 +99,14 @@ export class UserService {
   async remove(id: number): Promise<boolean> {
     const user = await this.userRepository.findOne(id);
     if (!user) {
-      return false;
+      throw new NotFoundException('User not found');
     }
-    await this.em.removeAndFlush(user);
-    return true;
+    try {
+      await this.em.removeAndFlush(user);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return true;
+    }
   }
 }

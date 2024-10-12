@@ -18,7 +18,7 @@ export class BaseController {
         currentPage: pageData.currentPage,
         from: pageData.from,
         lastPage: pageData.lastPage,
-        links: pageData.links || [],
+        // links: pageData.links || [],
         path: pageData.path || '',
         perPage: pageData.perPage,
         to: pageData.to,

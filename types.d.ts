@@ -10,6 +10,15 @@ interface PaginatedMeta {
   perPage: number;
   lastPage: number;
   total: number;
-  path: string;
-  links: PaginatedLinks[];
+  path?: string;
+  links?: PaginatedLinks[];
+}
+
+interface PaginatedParams {
+  page: number;
+  perPage: number;
+  path?: string;
+  search?: string;
+  searchFields?: string[];
+  selectFields?: Array<{ [key: string]: boolean | number | string }>;
 }
