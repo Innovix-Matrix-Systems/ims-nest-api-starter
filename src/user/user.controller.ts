@@ -13,7 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { BaseController } from 'src/common/controllers/base.controller';
+import { BaseController } from '../common/controllers/base.controller';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { ValidationExceptionFilter } from '../filters/validation-exception.filter';
 import { CreateUserDto } from './dto/create-user.dto';

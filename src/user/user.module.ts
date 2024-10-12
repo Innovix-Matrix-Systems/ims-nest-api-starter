@@ -4,7 +4,7 @@ import { UserEmailUniqueValidator } from '../decoretors/user-email-unique.decora
 import { User } from '../entities/user.entity';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { PasswordService } from 'src/misc/password.service';
+import { PasswordService } from '../misc/password.service';
 
 @Module({
   imports: [MikroOrmModule.forFeature([User])],

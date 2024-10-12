@@ -2,8 +2,8 @@ import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
-import { User } from 'src/entities/user.entity';
-import { PasswordService } from 'src/misc/password.service';
+import { User } from '../entities/user.entity';
+import { PasswordService } from '../misc/password.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 

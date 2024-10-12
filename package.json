@@ -24,7 +24,8 @@
     "migration:down": "npx mikro-orm migration:down",
     "migration:fresh": "npx mikro-orm migration:fresh --seed",
     "seeder:create": "npx mikro-orm seeder:create",
-    "seeder:run": "npx mikro-orm seeder:run"
+    "seeder:run": "npx mikro-orm seeder:run",
+    "prepare": "husky"
   },
   "dependencies": {
     "@faker-js/faker": "^9.0.3",
@@ -70,6 +71,7 @@
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^9.1.6",
     "jest": "^29.5.0",
     "prettier": "^3.0.0",
     "source-map-support": "^0.5.21",

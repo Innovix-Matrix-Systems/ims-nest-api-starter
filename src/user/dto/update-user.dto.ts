@@ -4,5 +4,5 @@ import { CreateUserDto } from './create-user.dto';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
-  id?: number; //need for unique field validation
+  userId?: number; //need for unique field validation
 }

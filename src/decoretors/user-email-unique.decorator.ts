@@ -18,7 +18,7 @@ export class UserEmailUniqueValidator implements ValidatorConstraintInterface {
 
   async validate(value: string, args: ValidationArguments) {
     const user = await this.userService.findByEmail(value);
-    const excludeUserId = (args?.object as any)?.id ?? 0; //we pass id in update payload
+    const excludeUserId = (args?.object as any)?.userId ?? 0; //we pass userId in update payload
     if (!user) {
       return true;
     }
