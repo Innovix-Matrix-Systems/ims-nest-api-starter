@@ -22,3 +22,8 @@ interface PaginatedParams {
   searchFields?: string[];
   selectFields?: Array<{ [key: string]: boolean | number | string }>;
 }
+
+interface ValidateUserResponse {
+  user: any;
+  errors: string[];
+}

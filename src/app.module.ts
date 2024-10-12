@@ -6,6 +6,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UserModule } from './user/user.module';
 import mikroOrmConfig from './config/mikro-orm.config';
 import { MiscModule } from './misc/misc.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MiscModule } from './misc/misc.module';
     }),
     UserModule,
     MiscModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

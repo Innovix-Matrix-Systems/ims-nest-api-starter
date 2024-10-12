@@ -78,7 +78,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<Partial<User> | null> {
     const user = await this.userRepository.findOne({ email });
-    return instanceToPlain(user);
+    return user;
   }
 
   // Update user by ID

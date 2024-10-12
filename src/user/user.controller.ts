@@ -10,6 +10,7 @@ import {
   Query,
   Res,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { BaseController } from 'src/common/controllers/base.controller';
@@ -17,6 +18,7 @@ import { ValidationExceptionFilter } from '../filters/validation-exception.filte
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController extends BaseController {
@@ -25,6 +27,7 @@ export class UserController extends BaseController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @UseFilters(ValidationExceptionFilter)
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     const user = await this.userService.create(createUserDto);
@@ -37,6 +40,7 @@ export class UserController extends BaseController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('perPage', ParseIntPipe) perPage: number = 10,
@@ -67,6 +71,7 @@ export class UserController extends BaseController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const user = await this.userService.findOne(+id);
     return this.sendSuccessResponse(
@@ -78,6 +83,7 @@ export class UserController extends BaseController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @UseFilters(ValidationExceptionFilter)
   async update(
     @Param('id') id: string,
@@ -94,6 +100,7 @@ export class UserController extends BaseController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: string, @Res() res: Response) {
     const isDeleted = await this.userService.remove(+id);
     if (!isDeleted) {
