@@ -34,4 +34,7 @@ export class CreateUserDto {
 
   @IsOptional()
   lastLoginAt?: Date;
+
+  @IsNotEmpty()
+  roles: number[];
 }

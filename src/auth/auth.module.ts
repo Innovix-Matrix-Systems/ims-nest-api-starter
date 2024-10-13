@@ -8,6 +8,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
+import { ConfigService } from '@nestjs/config';
+import { UserTransformer } from '../user/transformer/user.transformer';
 
 @Module({
   imports: [
@@ -18,11 +20,13 @@ import { LocalStrategy } from './strategies/local.strategy';
     MikroOrmModule.forFeature([User]),
   ],
   providers: [
+    ConfigService,
     AuthService,
     JwtStrategy,
     LocalStrategy,
     UserService,
     PasswordService,
+    UserTransformer,
   ],
   controllers: [AuthController],
 })

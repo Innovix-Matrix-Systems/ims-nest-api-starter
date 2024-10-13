@@ -7,6 +7,8 @@ import { UserModule } from './user/user.module';
 import mikroOrmConfig from './config/mikro-orm.config';
 import { MiscModule } from './misc/misc.module';
 import { AuthModule } from './auth/auth.module';
+import { PermissionModule } from './permission/permission.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     MiscModule,
     AuthModule,
+    PermissionModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

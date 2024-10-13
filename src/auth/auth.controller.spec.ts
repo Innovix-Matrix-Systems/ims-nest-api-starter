@@ -11,6 +11,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
+import { UserTransformer } from '../user/transformer/user.transformer';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -67,6 +68,7 @@ describe('AuthController', () => {
         UserService,
         PasswordService,
         LocalStrategy,
+        UserTransformer,
         {
           provide: JwtStrategy,
           useFactory: (configService: ConfigService) =>

@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../entities/user.entity';
 import { PasswordService } from '../misc/password.service';
+import { UserTransformer } from '../user/transformer/user.transformer';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -64,6 +65,7 @@ describe('AuthService', () => {
         UserService,
         PasswordService,
         LocalStrategy,
+        UserTransformer,
         {
           provide: JwtStrategy,
           useFactory: (configService: ConfigService) =>
@@ -95,6 +97,8 @@ describe('AuthService', () => {
       lastLoginAt: null,
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
+      roles: null,
+      permissions: null,
     };
     const user = await service.login(requestUser);
     expect(user).toEqual({
@@ -104,6 +108,8 @@ describe('AuthService', () => {
       isActive: true,
       createdAt: expect.any(Date),
       AccessToken: expect.any(String),
+      roles: null,
+      permissions: null,
     });
   });
 });

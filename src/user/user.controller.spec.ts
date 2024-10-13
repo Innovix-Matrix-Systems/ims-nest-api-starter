@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Response } from 'express';
 import { User } from '../entities/user.entity';
 import { PasswordService } from '../misc/password.service';
+import { UserTransformer } from './transformer/user.transformer';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
@@ -44,6 +45,7 @@ describe('UserController', () => {
       providers: [
         UserService,
         PasswordService,
+        UserTransformer,
         { provide: getRepositoryToken(User), useValue: mockUserRepository },
         { provide: EntityManager, useValue: mockEntityManager },
       ],
@@ -71,6 +73,7 @@ describe('UserController', () => {
       name: 'John Doe',
       password: 'password123',
       isActive: true,
+      roles: [2],
     };
     const resp = createMockResponse();
     await controller.create(createUserDto, resp);

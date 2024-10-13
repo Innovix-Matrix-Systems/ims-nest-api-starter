@@ -1,3 +1,7 @@
+interface DataTransformer<T, R> {
+  transform(entity: T): R;
+  transformMany(entities: T[]): R[];
+}
 interface PaginatedLinks {
   url: string;
   label: string;
@@ -23,22 +27,30 @@ interface PaginatedParams {
   selectFields?: Array<{ [key: string]: boolean | number | string }>;
 }
 
-interface ValidateUserResponse {
-  user: any;
-  errors: string[];
-}
-
-interface LoginResponse {
-  id: number;
-  name: string;
-  email: string;
-  isActive: boolean;
-  createdAt: Date;
-  device?: string;
-  AccessToken: string;
-}
-
 interface JwtEncodeData {
   email: string;
   sub: number;
+}
+
+interface UserResponse {
+  id: number;
+  name: string;
+  email: string;
+  password?: string;
+  device?: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+  lastLoginAt?: Date;
+  roles?: string[];
+  permissions?: string[];
+}
+
+interface LoginResponse extends UserResponse {
+  AccessToken: string;
+}
+
+interface ValidateUserResponse {
+  user: Partial<UserResponse>;
+  errors: string[];
 }

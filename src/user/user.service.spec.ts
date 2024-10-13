@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../entities/user.entity';
 import { PasswordService } from '../misc/password.service';
+import { UserTransformer } from './transformer/user.transformer';
 import { UserService } from './user.service';
 
 describe('UserService', () => {
@@ -18,8 +19,10 @@ describe('UserService', () => {
         name: 'John Doe',
         email: '1q3U8@example.com',
         isActive: true,
+        lastLoginAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
+        roles: ['Admin'],
       }),
       create: jest.fn().mockImplementation((dto) => ({
         ...dto,
@@ -43,6 +46,7 @@ describe('UserService', () => {
       providers: [
         UserService,
         PasswordService,
+        UserTransformer,
         { provide: getRepositoryToken(User), useValue: mockUserRepository }, // Provide the mock
         { provide: EntityManager, useValue: mockEntityManager },
       ],
@@ -61,6 +65,7 @@ describe('UserService', () => {
       name: 'John Doe',
       password: 'password123',
       isActive: true,
+      roles: [2],
     };
     const user = await service.create(createUserDto);
     expect(mockUserRepository.create).toHaveBeenCalledWith(createUserDto);
@@ -72,14 +77,21 @@ describe('UserService', () => {
   it('should find a user by ID', async () => {
     const userId = 1;
     const user = await service.findOne(userId);
-    expect(mockUserRepository.findOne).toHaveBeenCalledWith({ id: userId });
+    expect(mockUserRepository.findOne).toHaveBeenCalledWith(
+      { id: userId },
+      {
+        populate: ['roles'],
+      },
+    );
     expect(user).toEqual({
       id: userId,
       name: 'John Doe',
       email: '1q3U8@example.com',
       isActive: true,
+      lastLoginAt: expect.any(Date),
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
+      roles: expect.any(Array),
     });
   });
 

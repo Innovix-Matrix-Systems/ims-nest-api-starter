@@ -1,12 +1,16 @@
 import {
+  Collection,
   Entity,
   EntityRepositoryType,
+  ManyToMany,
   PrimaryKey,
   Property,
   Unique,
 } from '@mikro-orm/core';
 import { Exclude } from 'class-transformer';
 import { UserRepository } from '../repositories/user.repository';
+import { Permission } from './permission.entity';
+import { Role } from './role.entity';
 
 @Entity({ repository: () => UserRepository })
 export class User {
@@ -44,4 +48,11 @@ export class User {
 
   @Property({ onUpdate: () => new Date(), nullable: true })
   updatedAt: Date = new Date();
+  @ManyToMany(() => Role, 'users', { owner: true, hidden: true })
+  @Exclude()
+  roles = new Collection<Role>(this);
+
+  @ManyToMany(() => Permission, 'users', { owner: true, hidden: true })
+  @Exclude()
+  permissions = new Collection<Permission>(this);
 }

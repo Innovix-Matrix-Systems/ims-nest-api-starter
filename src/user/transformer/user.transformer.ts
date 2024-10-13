@@ -1,0 +1,57 @@
+import { Permission } from '../../entities/permission.entity';
+import { User } from '../../entities/user.entity';
+
+interface Options {
+  loadRelations?: boolean;
+  showSensetiveData?: boolean;
+  permissions?: Permission[];
+}
+export class UserTransformer
+  implements DataTransformer<User, Partial<UserResponse>>
+{
+  transform(
+    user: User,
+    options: Options = {
+      loadRelations: false,
+      showSensetiveData: false,
+      permissions: [],
+    },
+  ): Partial<UserResponse> {
+    const { loadRelations, showSensetiveData, permissions } = options;
+    const transformedUser: Partial<UserResponse> = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      isActive: user.isActive,
+      lastLoginAt: user?.lastLoginAt,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    if (showSensetiveData) {
+      transformedUser.password = user.password;
+    }
+
+    if (loadRelations && user?.roles) {
+      transformedUser.roles = user.roles.map((role) => role?.name);
+    }
+
+    if (loadRelations && permissions?.length > 0) {
+      transformedUser.permissions = permissions.map(
+        (permission) => permission?.name,
+      );
+    }
+    return transformedUser;
+  }
+
+  transformMany(
+    users: User[],
+    options: Options = {
+      loadRelations: false,
+      showSensetiveData: false,
+      permissions: [],
+    },
+  ): Partial<UserResponse>[] {
+    return users.map((user) => this.transform(user, options));
+  }
+}

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PasswordService } from '../misc/password.service';
-import { User } from '../entities/user.entity';
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -17,7 +16,8 @@ export class AuthService {
     password: string,
   ): Promise<ValidateUserResponse> {
     const errors: string[] = [];
-    const user = await this.userService.findByEmail(email);
+    const user =
+      await this.userService.findByEmailWithRoleAndPermissions(email);
     if (!user) {
       errors.push("Email incorrect, User doesn't exist!");
       return {
@@ -48,7 +48,7 @@ export class AuthService {
     };
   }
 
-  async login(user: User): Promise<LoginResponse> {
+  async login(user: Partial<UserResponse>): Promise<LoginResponse> {
     const payload: JwtEncodeData = { email: user.email, sub: user.id };
     await this.userService.update(user.id, { lastLoginAt: new Date() });
     const token = this.jwtService.sign(payload);
@@ -58,6 +58,8 @@ export class AuthService {
       email: user.email,
       isActive: user.isActive,
       createdAt: user.createdAt,
+      roles: user.roles,
+      permissions: user.permissions,
       AccessToken: token,
     };
   }

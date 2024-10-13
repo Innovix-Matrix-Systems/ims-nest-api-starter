@@ -1,0 +1,45 @@
+import type { EntityManager, EntityRepository } from '@mikro-orm/core';
+import { Seeder } from '@mikro-orm/seeder';
+import { Role } from '../../entities/role.entity';
+import { User } from '../../entities/user.entity';
+import * as bcrypt from 'bcrypt';
+
+export class UserSeeder extends Seeder {
+  async run(em: EntityManager): Promise<void> {
+    const roleRepository: EntityRepository<Role> = em.getRepository(Role);
+    const userRespository: EntityRepository<User> = em.getRepository(User);
+
+    const superAdminRole = await roleRepository.findOne({ name: 'SuperAdmin' });
+    const adminRole = await roleRepository.findOne({ name: 'Admin' });
+    const userRole = await roleRepository.findOne({ name: 'User' });
+
+    const superAdmin = userRespository.create({
+      name: 'SuperAdmin IMS',
+      email: 'superadmin@ims.com',
+      password: await bcrypt.hash('123456', 10),
+      isActive: true,
+      roles: [superAdminRole],
+    });
+    em.persist(superAdmin);
+
+    const admin = userRespository.create({
+      name: 'Admin IMS',
+      email: 'admin@ims.com',
+      password: await bcrypt.hash('123456', 10),
+      isActive: true,
+      roles: [adminRole],
+    });
+    em.persist(admin);
+
+    const user = userRespository.create({
+      name: 'User IMS',
+      email: 'user@ims.com',
+      password: await bcrypt.hash('123456', 10),
+      isActive: true,
+      roles: [userRole],
+    });
+    em.persist(user);
+
+    await em.flush();
+  }
+}
