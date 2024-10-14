@@ -5,9 +5,9 @@ import { getAllPermissions } from '../../utils/permission.helper';
 
 export class PermissionSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
-    const permissons = getAllPermissions();
+    const permissions = getAllPermissions();
 
-    for (const permissionName of permissons) {
+    for (const permissionName of permissions) {
       const permission = em.create(Permission, { name: permissionName });
       em.persist(permission);
     }

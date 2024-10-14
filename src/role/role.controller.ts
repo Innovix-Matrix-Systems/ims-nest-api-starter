@@ -11,6 +11,9 @@ import {
 import { Response } from 'express';
 import { BaseController } from '../common/controllers/base.controller';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { PermissionGuard } from '../common/guards/permission.guard';
+import { Permissions } from '../decorators/permissions.decorator';
+import { PermissionName } from '../enum/permission.enum';
 import { CreateRoleDto } from './dto/role-create.dto';
 import { RoleService } from './role.service';
 
@@ -21,7 +24,8 @@ export class RoleController extends BaseController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionGuard)
+  @Permissions(PermissionName.ROLE_VIEW_ALL)
   async findAll(@Res() res: Response) {
     const roles = await this.roleService.findAll();
     return this.sendSuccessResponse(
@@ -33,19 +37,21 @@ export class RoleController extends BaseController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionGuard)
+  @Permissions(PermissionName.ROLE_CREATE)
   async createRole(@Body() createRoleDto: CreateRoleDto, @Res() res: Response) {
     const role = await this.roleService.create(createRoleDto);
     return this.sendSuccessResponse(
       role,
       'Role created successfully',
-      200,
+      201,
       res,
     );
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionGuard)
+  @Permissions(PermissionName.ROLE_DELETE)
   async deleteRole(@Param('id') id: string, @Res() res: Response) {
     await this.roleService.delete(+id);
     return this.sendSuccessResponse(

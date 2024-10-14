@@ -7,13 +7,13 @@ import * as bcrypt from 'bcrypt';
 export class UserSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     const roleRepository: EntityRepository<Role> = em.getRepository(Role);
-    const userRespository: EntityRepository<User> = em.getRepository(User);
+    const userRepository: EntityRepository<User> = em.getRepository(User);
 
     const superAdminRole = await roleRepository.findOne({ name: 'SuperAdmin' });
     const adminRole = await roleRepository.findOne({ name: 'Admin' });
     const userRole = await roleRepository.findOne({ name: 'User' });
 
-    const superAdmin = userRespository.create({
+    const superAdmin = userRepository.create({
       name: 'SuperAdmin IMS',
       email: 'superadmin@ims.com',
       password: await bcrypt.hash('123456', 10),
@@ -22,7 +22,7 @@ export class UserSeeder extends Seeder {
     });
     em.persist(superAdmin);
 
-    const admin = userRespository.create({
+    const admin = userRepository.create({
       name: 'Admin IMS',
       email: 'admin@ims.com',
       password: await bcrypt.hash('123456', 10),
@@ -31,7 +31,7 @@ export class UserSeeder extends Seeder {
     });
     em.persist(admin);
 
-    const user = userRespository.create({
+    const user = userRepository.create({
       name: 'User IMS',
       email: 'user@ims.com',
       password: await bcrypt.hash('123456', 10),

@@ -5,5 +5,6 @@ import { PasswordService } from './password.service';
   imports: [],
   controllers: [],
   providers: [PasswordService],
+  exports: [PasswordService],
 })
 export class MiscModule {}

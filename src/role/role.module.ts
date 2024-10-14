@@ -1,11 +1,13 @@
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
+import { Role } from '../entities/role.entity';
+import { User } from '../entities/user.entity';
+import { UserModule } from '../user/user.module';
 import { RoleController } from './role.controller';
 import { RoleService } from './role.service';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { Role } from '../entities/role.entity';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Role])],
+  imports: [MikroOrmModule.forFeature([User, Role]), UserModule],
   providers: [RoleService],
   controllers: [RoleController],
 })
