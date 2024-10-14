@@ -6,12 +6,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Response } from 'express';
 import { User } from '../entities/user.entity';
 import { PasswordService } from '../misc/password.service';
+import { UserTransformer } from '../user/transformer/user.transformer';
 import { UserService } from '../user/user.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { UserTransformer } from '../user/transformer/user.transformer';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -25,6 +25,8 @@ describe('AuthController', () => {
         id: 1,
         name: 'John Doe',
         email: '1q3U8@example.com',
+        password:
+          '$2b$10$q81aKunjGaLbPvt5biUjFeSXLKhXVsMtsNxF8.Nwjx8I5l7OcU7sy',
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -98,20 +100,12 @@ describe('AuthController', () => {
   });
 
   it('should login user', async () => {
-    const requestUser = {
-      id: 1,
-      name: 'John Doe',
+    const loginDto = {
       email: '1q3U8@example.com',
       password: 'password123',
-      isActive: true,
-      device: 'test-device',
-      lastActiveDevice: null,
-      lastLoginAt: null,
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
     };
     const resp = createMockResponse();
-    await controller.login({ user: requestUser }, resp);
+    await controller.login(loginDto, resp);
     expect(resp.status).toHaveBeenCalledWith(200);
     expect(resp.json).toHaveBeenCalledWith({
       success: true,

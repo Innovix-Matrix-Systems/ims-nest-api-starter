@@ -3,7 +3,7 @@ import { User } from '../../entities/user.entity';
 
 interface Options {
   loadRelations?: boolean;
-  showSensetiveData?: boolean;
+  showSensitiveData?: boolean;
   permissions?: Permission[];
 }
 export class UserTransformer
@@ -13,11 +13,11 @@ export class UserTransformer
     user: User,
     options: Options = {
       loadRelations: false,
-      showSensetiveData: false,
+      showSensitiveData: false,
       permissions: [],
     },
   ): Partial<UserResponse> {
-    const { loadRelations, showSensetiveData, permissions } = options;
+    const { loadRelations, showSensitiveData, permissions } = options;
     const transformedUser: Partial<UserResponse> = {
       id: user.id,
       name: user.name,
@@ -28,7 +28,7 @@ export class UserTransformer
       updatedAt: user.updatedAt,
     };
 
-    if (showSensetiveData) {
+    if (showSensitiveData) {
       transformedUser.password = user.password;
     }
 
@@ -48,7 +48,7 @@ export class UserTransformer
     users: User[],
     options: Options = {
       loadRelations: false,
-      showSensetiveData: false,
+      showSensitiveData: false,
       permissions: [],
     },
   ): Partial<UserResponse>[] {

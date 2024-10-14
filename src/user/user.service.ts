@@ -1,11 +1,18 @@
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Permission } from '../entities/permission.entity';
 import { Role } from '../entities/role.entity';
 import { User } from '../entities/user.entity';
 import { PasswordService } from '../misc/password.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ProfileUpdateDto } from './dto/profile-update.dto';
+import { ChangeSelfPasswordDto } from './dto/reset-self-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserTransformer } from './transformer/user.transformer';
 
@@ -15,6 +22,10 @@ interface UserPaginatedList {
 }
 @Injectable()
 export class UserService {
+  // List of role ids that can't be assigned (ex: SuperAdmin)
+  private UNASSIGNABLE_ROLE_IDS = [1];
+  // unchangeable user ids (ex: SuperAdmin)
+  private UNCHANGEABLE_USER_IDS = [1];
   constructor(
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
@@ -28,6 +39,10 @@ export class UserService {
     createUserDto.password = await this.passwordService.hashPassword(
       createUserDto.password,
     );
+    const roleIds = createUserDto.roles.filter(
+      (roleId) => !this.UNASSIGNABLE_ROLE_IDS.includes(roleId),
+    );
+    createUserDto.roles = roleIds;
     const user = this.userRepository.create(createUserDto);
     await this.em.persistAndFlush(user);
     return this.userTransformer.transform(user);
@@ -103,7 +118,7 @@ export class UserService {
     );
     return this.userTransformer.transform(user, {
       loadRelations: true,
-      showSensetiveData: true,
+      showSensitiveData: true,
     }); // use for authentication
   }
 
@@ -116,10 +131,11 @@ export class UserService {
         populate: ['roles', 'roles.permissions', 'permissions'],
       },
     );
-    const userPermissions = user.permissions.getItems();
-    const rolePermissions = user.roles
-      .getItems()
-      .flatMap((role) => role.permissions.getItems());
+    if (!user) return null;
+    const userPermissions = user?.permissions?.getItems() || [];
+    const rolePermissions = (user?.roles?.getItems() || []).flatMap((role) =>
+      role.permissions.getItems(),
+    );
     const combinedPermissions = [...userPermissions, ...rolePermissions];
     const uniquePermissions = Array.from(
       new Set(combinedPermissions.map((permission) => permission.id)),
@@ -128,7 +144,7 @@ export class UserService {
     );
     return this.userTransformer.transform(user, {
       loadRelations: true,
-      showSensetiveData: true,
+      showSensitiveData: true,
       permissions: uniquePermissions,
     }); // use for authentication
   }
@@ -138,11 +154,77 @@ export class UserService {
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<Partial<UserResponse>> {
+    if (this.UNCHANGEABLE_USER_IDS.includes(id)) {
+      throw new ForbiddenException("You can't update this user");
+    }
     const user = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    //remove sensitive info like role, password from dto
+    delete updateUserDto.password;
+    delete updateUserDto.roles;
     this.userRepository.assign(user, updateUserDto);
+    await this.em.flush();
+    return this.userTransformer.transform(user);
+  }
+
+  async updateLoginDate(id: number): Promise<Partial<UserResponse>> {
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    this.userRepository.assign(user, { lastLoginAt: new Date() });
+    await this.em.flush();
+    return this.userTransformer.transform(user);
+  }
+
+  async updateProfile(
+    id: number,
+    data: ProfileUpdateDto,
+  ): Promise<Partial<UserResponse>> {
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { userId: _userId, ...restOfDto } = data;
+
+    this.userRepository.assign(user, restOfDto);
+    await this.em.flush();
+    return this.userTransformer.transform(user);
+  }
+
+  async changePassword(id: number, changePasswordDto: ChangePasswordDto) {
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    user.password = await this.passwordService.hashPassword(
+      changePasswordDto.password,
+    );
+    await this.em.flush();
+    return this.userTransformer.transform(user);
+  }
+
+  async changeSelfPassword(
+    id: number,
+    changeSelfPasswordDto: ChangeSelfPasswordDto,
+  ) {
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const { currentPassword, password } = changeSelfPasswordDto;
+    if (
+      !(await this.passwordService.comparePassword(
+        currentPassword,
+        user.password,
+      ))
+    ) {
+      throw new ForbiddenException('Current password is incorrect');
+    }
+    user.password = await this.passwordService.hashPassword(password);
     await this.em.flush();
     return this.userTransformer.transform(user);
   }
@@ -162,38 +244,48 @@ export class UserService {
     }
   }
 
-  async assignRoles(userId: number, roleIds: number[]): Promise<User> {
+  //Access control
+  async assignRoles(
+    userId: number,
+    roleIds: number[],
+  ): Promise<Partial<UserResponse>> {
     const user = await this.userRepository.findOne(
       { id: userId },
       {
         populate: ['roles'],
       },
     );
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     const roles = await this.em.find(Role, { id: { $in: roleIds } });
 
     user.roles.set(roles);
     await this.em.flush();
-    return user;
+    return this.userTransformer.transform(user);
   }
 
   // Bulk assign permissions to a user
   async assignPermissions(
     userId: number,
     permissionIds: number[],
-  ): Promise<User> {
+  ): Promise<Partial<UserResponse>> {
     const user = await this.userRepository.findOne(
       { id: userId },
       {
         populate: ['permissions'],
       },
     );
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     const permissions = await this.em.find(Permission, {
       id: { $in: permissionIds },
     });
 
     user.permissions.set(permissions);
     await this.em.flush();
-    return user;
+    return this.userTransformer.transform(user);
   }
 
   async getUserPermissions(userId: number): Promise<string[]> {
@@ -217,9 +309,9 @@ export class UserService {
     return uniquePermissions.map((permission) => permission.name);
   }
 
-  async hasPermisssionTo(
+  async hasPermissionTo(
     userId: number,
-    permissionName: string,
+    permissionNames: string[],
   ): Promise<boolean> {
     const user = await this.userRepository.findOne(
       { id: userId },
@@ -227,14 +319,17 @@ export class UserService {
         populate: ['roles', 'roles.permissions', 'permissions'],
       },
     );
+    if (!user) return false;
     const userPermissions = user.permissions.getItems();
     const rolePermissions = user.roles
       .getItems()
       .flatMap((role) => role.permissions.getItems());
     const combinedPermissions = [...userPermissions, ...rolePermissions];
 
-    return combinedPermissions.some(
-      (permission) => permission.name === permissionName,
-    );
+    return permissionNames.every((permissionName) => {
+      return combinedPermissions.some(
+        (permission) => permission.name === permissionName,
+      );
+    });
   }
 }

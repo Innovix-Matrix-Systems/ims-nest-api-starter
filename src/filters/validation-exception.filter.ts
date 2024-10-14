@@ -13,6 +13,15 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
     const exceptionResponse: any = exception.getResponse();
+    console.log(exceptionResponse);
+    if (!Array.isArray(exceptionResponse?.message)) {
+      response.status(status).json({
+        statusCode: status,
+        message: exceptionResponse.error,
+        errors: exceptionResponse.message,
+      });
+      return;
+    }
     // Combine the default message and the Laravel-like errors object
     const formattedErrors = this.formatErrors(exceptionResponse?.message || []);
     // Return combined response with 'statusCode', 'error', and custom 'errors'
@@ -25,7 +34,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
 
   private formatErrors(errors: string[]) {
     const result = {};
-    errors.forEach((error) => {
+    errors?.forEach((error) => {
       const parts = error.split(' ');
       const field = parts[0]?.toLowerCase();
       const message = error;

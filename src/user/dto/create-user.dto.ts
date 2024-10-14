@@ -5,7 +5,8 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { IsUserEmailUnique } from '../../decoretors/user-email-unique.decorator';
+import { IsUserEmailUnique } from '../../decorators/user-email-unique.decorator';
+import { IsValidRoles } from '../../decorators/valid-roles.decorator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -32,9 +33,7 @@ export class CreateUserDto {
   @IsOptional()
   lastActiveDevice?: string;
 
-  @IsOptional()
-  lastLoginAt?: Date;
-
   @IsNotEmpty()
+  @IsValidRoles()
   roles: number[];
 }

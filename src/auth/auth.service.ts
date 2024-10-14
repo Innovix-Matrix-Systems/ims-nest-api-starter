@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PasswordService } from '../misc/password.service';
 import { UserService } from '../user/user.service';
@@ -36,6 +36,14 @@ export class AuthService {
         errors,
       };
     }
+
+    if (!user.isActive) {
+      errors.push('User is not active!');
+      return {
+        user: null,
+        errors,
+      };
+    }
     if (user && isMatch) {
       return {
         user,
@@ -48,9 +56,17 @@ export class AuthService {
     };
   }
 
-  async login(user: Partial<UserResponse>): Promise<LoginResponse> {
+  async login(email: string, password: string): Promise<LoginResponse> {
+    const validateUserData: ValidateUserResponse = await this.validateUser(
+      email,
+      password,
+    );
+    const { user, errors } = validateUserData;
+    if (!user) {
+      throw new BadRequestException(errors);
+    }
+    await this.userService.updateLoginDate(user.id);
     const payload: JwtEncodeData = { email: user.email, sub: user.id };
-    await this.userService.update(user.id, { lastLoginAt: new Date() });
     const token = this.jwtService.sign(payload);
     return {
       id: user.id,

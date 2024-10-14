@@ -23,6 +23,8 @@ describe('AuthService', () => {
         id: 1,
         name: 'John Doe',
         email: '1q3U8@example.com',
+        password:
+          '$2b$10$q81aKunjGaLbPvt5biUjFeSXLKhXVsMtsNxF8.Nwjx8I5l7OcU7sy',
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -86,21 +88,7 @@ describe('AuthService', () => {
   });
 
   it('should login user', async () => {
-    const requestUser = {
-      id: 1,
-      name: 'John Doe',
-      email: '1q3U8@example.com',
-      password: 'password123',
-      isActive: true,
-      device: 'test-device',
-      lastActiveDevice: null,
-      lastLoginAt: null,
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
-      roles: null,
-      permissions: null,
-    };
-    const user = await service.login(requestUser);
+    const user = await service.login('1q3U8@example.com', 'password123');
     expect(user).toEqual({
       id: 1,
       name: 'John Doe',
@@ -108,8 +96,8 @@ describe('AuthService', () => {
       isActive: true,
       createdAt: expect.any(Date),
       AccessToken: expect.any(String),
-      roles: null,
-      permissions: null,
+      roles: undefined,
+      permissions: undefined,
     });
   });
 });

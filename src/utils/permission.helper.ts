@@ -12,6 +12,7 @@ export const getAllPermissions = (): string[] => {
     'user.create',
     'user.update',
     'user.delete',
+    'user.acl',
   ];
 };
 
@@ -22,5 +23,16 @@ export const getUserPermissions = (): string[] => {
     'user.create',
     'user.update',
     'user.delete',
+    'user.acl',
+  ];
+};
+
+export const getRolePermissions = (): string[] => {
+  return [
+    'role.view.all',
+    'role.view',
+    'role.create',
+    'role.update',
+    'role.delete',
   ];
 };

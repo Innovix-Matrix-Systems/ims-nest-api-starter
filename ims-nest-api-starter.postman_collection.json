@@ -1,0 +1,402 @@
+{
+	"info": {
+		"_postman_id": "0f10bdbf-368f-47c9-8a59-e7d1586fae52",
+		"name": "ims-nest-api-starter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29444436",
+		"_collection_link": "https://innovix-matrix-system.postman.co/workspace/Innovix-Matrix-System-Workspace~c0ff4f3a-4d52-490d-81f4-c33d60e51246/collection/29444436-0f10bdbf-368f-47c9-8a59-e7d1586fae52?action=share&source=collection_link&creator=29444436"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"john1.do12@ims.com\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Role & Permissions",
+			"item": [
+				{
+					"name": "Permission",
+					"item": [
+						{
+							"name": "get all permission",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/permission",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"permission"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Role",
+					"item": [
+						{
+							"name": "Get All Role",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/role",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"role"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create new role",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test Role\",\r\n    \"description\": \"test role create\",\r\n    \"permissions\": [1,2,9]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/role",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"role"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Role",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/role/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"role",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "get All user",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Create new User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"John Doe\",\r\n    \"email\": \"john41.do124@ims.com\",\r\n    \"password\": \"securepassword123\",\r\n    \"device\": \"mobile\",\r\n    \"isActive\": true,\r\n    \"lastActiveDevice\": \"iPhone\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"John Doe\",\r\n    \"email\": \"john41.do124@ims.com\",\r\n    \"password\": \"securepassword123\",\r\n    \"device\": \"mobile\",\r\n    \"isActive\": true,\r\n    \"lastActiveDevice\": \"iPhone\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "15"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Role to user",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4xLmRvMTJAaW1zLmNvbSIsInN1YiI6MzYsImlhdCI6MTcyODcyNDAzOSwiZXhwIjoxNzI4ODEwNDM5fQ.sWdTkypWfIngRyZKWePoJO41gI2wWoQWwPUYI-7PnXE",
+			"type": "string"
+		}
+	]
+}

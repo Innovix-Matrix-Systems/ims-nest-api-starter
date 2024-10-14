@@ -1,15 +1,8 @@
-import {
-  Controller,
-  Post,
-  Request,
-  Res,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, Res, UseFilters } from '@nestjs/common';
 import { BaseController } from '../common/controllers/base.controller';
 import { ValidationExceptionFilter } from '../filters/validation-exception.filter';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController extends BaseController {
@@ -17,11 +10,13 @@ export class AuthController extends BaseController {
     super();
   }
 
-  @UseGuards(LocalAuthGuard)
-  @UseFilters(ValidationExceptionFilter)
   @Post('login')
-  async login(@Request() req, @Res() res) {
-    const authData: LoginResponse = await this.authService.login(req.user);
+  @UseFilters(ValidationExceptionFilter)
+  async login(@Body() loginDto: LoginDto, @Res() res) {
+    const authData: LoginResponse = await this.authService.login(
+      loginDto.email,
+      loginDto.password,
+    );
     return this.sendSuccessResponse(
       authData,
       'Logged in successfully',
