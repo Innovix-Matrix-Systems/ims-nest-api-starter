@@ -1,4 +1,3 @@
-
 <p align="center">
   <a href="http://nestjs.com/" target="blank">
     <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
@@ -9,7 +8,7 @@
 
 `ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications. This starter includes authentication, authorization, user management, role management, and role/permission-based access.
 
-## Getting Started
+## Getting Started Guide Without Docker
 
 1. **Choose Your Local Development Tool:**
 
@@ -92,9 +91,48 @@
 
    The API will run on the port specified in your `.env` file (`APP_PORT`).
 
-## Running With Docker
+## Getting Started Guide With Docker
 
-Coming soon
+1.  **Build the Docker Image**
+
+    To build the Docker image for the application, run the following command:
+
+    ```bash
+      docker-compose build
+    ```
+
+2.  **Start the Application**
+
+    After building the image, start the application using:
+
+    ```bash
+      docker-compose up
+    ```
+
+    the Api should be running at `.env.docker` file (`APP_PORT`)(8000) by default.
+
+3.  **Run Migrations and Seed Data**
+
+    If you need to run database migrations and seed initial data, you can enter the application container with the following command:
+
+    ```bash
+    docker-compose exec app bash
+    ```
+    Once inside the container, execute the following commands:
+
+    ```bash
+    npm run migration:up
+    npm run seeder:run
+    ```
+    This will apply any pending migrations and populate the database with seed data.
+
+4.  **Git hook for Check**
+    You can use Husky to manage git hooks:
+
+    ```bash
+    npx husky install
+    ```
+
 
 ## Health Check
 
