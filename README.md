@@ -1,85 +1,199 @@
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank">
+    <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
+  </a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## About this project
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications. This starter includes authentication, authorization, user management, role management, and role/permission-based access.
 
-## Description
+## Getting Started
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+1. **Choose Your Local Development Tool:**
 
-## Project setup
+   Select your preferred local development tool, such as [Docker](https://www.docker.com/), [Laragon](https://github.com/leokhoa/laragon), [Dbngin](https://dbngin.com/), or any other tool that suits your needs.
 
-```bash
-$ npm install
+   ### Version Requirements
+
+   - Node.js version 18+
+   - PostgreSQL 16+
+   - MikroORM for database interaction
+
+2. **Configure Your Environment:**
+
+   Update your `.env` file with the correct database credentials and environment variables.
+
+   _Copy `.env.example` to `.env`:_
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Configure the following variables:
+
+   - `APP_PORT`
+   - `APP_ENV`
+   - `JWT_SECRET`
+   - `JWT_EXPIRATION`
+
+   For JWT Secret generation, you can use this command:
+
+   ```bash
+   openssl rand -base64 64
+   ```
+
+   You also need to set up your PostgreSQL user and database:
+
+   ```bash
+   DB_DRIVER=postgres
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=ims-nest
+   DB_USERNAME=postgres
+   DB_PASSWORD=
+   ```
+
+   You can ignore this if you are using Docker (see the Docker section).
+
+3. **Install Dependencies:**
+
+   To install all necessary packages, run the following commands:
+
+   ```bash
+   npm install
+   ```
+
+   You can use Husky to manage git hooks:
+
+   ```bash
+   npx husky install
+   ```
+
+4. **Migrate and Seed the Database:**
+
+   Initialize and seed the database with default data using MikroORM's migration tool:
+
+   ```bash
+   npm run migration:up
+   npm run seeder:run
+   ```
+
+   Now, your project is ready for use. You can start exploring the API and customizing your app as needed.
+
+5. **Run the Application:**
+
+   Start the NestJS server locally:
+
+   ```bash
+   npm run start:dev
+   ```
+
+   The API will run on the port specified in your `.env` file (`APP_PORT`).
+
+## Running With Docker
+
+Coming soon
+
+## Health Check
+
+To ensure the health of your application, we have integrated [Terminus](https://docs.nestjs.com/recipes/terminus) for health checks.
+
+You can visit `http://localhost:<APP_PORT>/health` to verify the status.
+
+If everything is set up correctly, you should see a response like this:
+
+```json
+{
+  "status": "ok",
+  "info": {
+    "ims-nest": {
+      "status": "up"
+    },
+    "database": {
+      "status": "up"
+    },
+    "memory_heap": {
+      "status": "up"
+    },
+    "memory_rss": {
+      "status": "up"
+    }
+  },
+  "error": {},
+  "details": {
+    "ims-nest": {
+      "status": "up"
+    },
+    "database": {
+      "status": "up"
+    },
+    "memory_heap": {
+      "status": "up"
+    },
+    "memory_rss": {
+      "status": "up"
+    }
+  }
+}
 ```
 
-## Compile and run the project
+## Testing
+
+Run tests using Jest:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run test
 ```
 
-## Run tests
+## Extra CLI Commands
+
+### Generate MikroORM Entities:
+
+Generate entities to help improve your development flow with:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npx mikro-orm schema:generate
 ```
 
-## Resources
+### Run Migrations:
 
-Check out a few resources that may come in handy when working with NestJS:
+To manage database schema changes, use:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+npm run migration:create
+# or
+npx mikro-orm migration:create
+npm run migration:up
+# or
+npx mikro-orm migration:up
+```
 
-## Support
+If you want to drop all migrations and run them again with seed data, use:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm run migration:fresh
+# or
+npx mikro-orm migration:fresh --seed
+```
 
-## Stay in touch
+### Nest Cli Commands:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+You can follow the Nest CLI command to create your required module, service, controller, and others. Visit: [Nest CLI Overview](https://docs.nestjs.com/cli/overview)
+
+You can also run this command to see all the CLI commands available in your project:
+
+```bash
+nest generate --help
+```
+
+## Authors
+
+- [@AHS12](https://www.github.com/AHS12)
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is brought to you by Innovix Matrix System and is released as open-source software under the [MIT license](https://opensource.org/licenses/MIT).
+
+Feel free to use, modify, and distribute this starter project under the MIT license terms. Contributions are welcome to improve this template!

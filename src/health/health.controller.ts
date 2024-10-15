@@ -22,7 +22,7 @@ export class HealthController {
   @HealthCheck()
   check() {
     const port = process.env.APP_PORT;
-    const appUrlToPing = `${process.env.APP_URL}:${port}/api/v1`;
+    const appUrlToPing = `${process.env.APP_URL}:${port}/api/v1/ping`;
     return this.health.check([
       () => this.http.pingCheck('ims-nest', appUrlToPing),
       () => this.db.pingCheck('database'),
