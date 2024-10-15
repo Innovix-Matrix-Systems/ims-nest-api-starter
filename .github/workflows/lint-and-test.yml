@@ -1,0 +1,33 @@
+name: Lint and Test Nest App
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Run lint check
+      - name: Run Linter
+        run: npm run lint
+
+      # Run tests
+      - name: Run Tests
+        run: npm run test
