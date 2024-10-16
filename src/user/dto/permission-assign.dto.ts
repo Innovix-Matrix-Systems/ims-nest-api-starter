@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { IsValidPermissions } from 'src/decorators/valid-permission.decorator';
+import { IsValidPermissions } from '../../decorators/valid-permission.decorator';
 
 export class PermissionAssignDto {
   @IsNotEmpty()

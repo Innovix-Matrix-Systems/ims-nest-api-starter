@@ -22,32 +22,28 @@ describe('PasswordService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('hashPassword', () => {
-    it('should return a hashed password', async () => {
-      const password = 'testPassword';
-      const hash = await service.hashPassword(password);
+  it('should return a hashed password', async () => {
+    const password = 'testPassword';
+    const hash = await service.hashPassword(password);
 
-      expect(bcrypt.hash).toHaveBeenCalledWith(password, 10);
-      expect(hash).not.toEqual(password);
-    });
+    expect(bcrypt.hash).toHaveBeenCalledWith(password, 10);
+    expect(hash).not.toEqual(password);
   });
 
-  describe('comparePassword', () => {
-    it('should return true for matching passwords', async () => {
-      const password = 'testPassword';
-      const hash = await bcrypt.hash(password, 10);
+  it('should return true for matching passwords', async () => {
+    const password = 'testPassword';
+    const hash = await bcrypt.hash(password, 10);
 
-      const result = await service.comparePassword(password, hash);
-      expect(result).toBe(true); // Passwords should match
-    });
+    const result = await service.comparePassword(password, hash);
+    expect(result).toBe(true); // Passwords should match
+  });
 
-    it('should return false for non-matching passwords', async () => {
-      (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
-      const password = 'testPassword';
-      const hash = await bcrypt.hash('differentPassword', 10);
+  it('should return false for non-matching passwords', async () => {
+    (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
+    const password = 'testPassword';
+    const hash = await bcrypt.hash('differentPassword', 10);
 
-      const result = await service.comparePassword(password, hash);
-      expect(result).toBe(false); // Passwords should not match
-    });
+    const result = await service.comparePassword(password, hash);
+    expect(result).toBe(false); // Passwords should not match
   });
 });

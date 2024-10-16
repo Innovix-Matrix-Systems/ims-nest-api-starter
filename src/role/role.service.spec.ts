@@ -1,21 +1,12 @@
 import { Collection, EntityManager, EntityRepository } from '@mikro-orm/core';
 import { getRepositoryToken } from '@mikro-orm/nestjs';
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Permission } from '../entities/permission.entity';
 import { Role } from '../entities/role.entity';
 import { User } from '../entities/user.entity';
 import { RoleService } from './role.service';
 
-// jest.mock('@mikro-orm/core', () => {
-//   const actual = jest.requireActual('@mikro-orm/core');
-//   return {
-//     ...actual,
-//     Collection: jest.fn().mockImplementation(() => ({
-//       set: jest.fn(),
-//       getItems: jest.fn().mockReturnValue([]),
-//     })),
-//   };
-// });
 jest.mock('@mikro-orm/core', () => {
   const actual = jest.requireActual('@mikro-orm/core');
   return {
@@ -27,7 +18,6 @@ jest.mock('@mikro-orm/core', () => {
           items = newItems;
         }),
         getItems: jest.fn(() => items),
-        // Add any other methods you need to mock
       };
     }),
   };
@@ -48,8 +38,6 @@ describe('RoleService', () => {
         description: 'This is a test permission',
       } as Permission,
     ];
-
-    // Create a mock Role that includes all properties
     const createMockRole = (
       id: number,
       name: string,
@@ -122,7 +110,6 @@ describe('RoleService', () => {
     // Ensure that set was called with mockPermissions
     expect(role.permissions.set).toHaveBeenCalledWith(mockPermissions);
 
-    // Now this should pass
     expect(role.permissions.getItems()).toEqual(mockPermissions);
 
     expect(mockEntityManager.persistAndFlush).toHaveBeenCalledWith(role);
@@ -136,5 +123,26 @@ describe('RoleService', () => {
     expect(roles).toEqual(mockRoles);
   });
 
-  // Add more tests as needed...
+  it('should not delete a system role', async () => {
+    const systemRoleId = 1; // 1 is a system role ID
+    await expect(service.delete(systemRoleId)).rejects.toThrow(
+      InternalServerErrorException,
+    );
+
+    try {
+      await service.delete(systemRoleId);
+    } catch (error) {
+      expect(error).toBeInstanceOf(InternalServerErrorException);
+      expect(error.message).toEqual('System roles cannot be deleted');
+      expect(error.getStatus()).toEqual(500);
+    }
+    expect(mockEntityManager.removeAndFlush).not.toHaveBeenCalled();
+  });
+
+  it('should delete a system role', async () => {
+    await service.delete(4);
+
+    expect(mockRoleRepository.findOne).toHaveBeenCalledWith(4);
+    expect(mockEntityManager.removeAndFlush).toHaveBeenCalled();
+  });
 });
