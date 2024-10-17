@@ -33,7 +33,9 @@ export class UserTransformer
     }
 
     if (loadRelations && user?.roles) {
-      transformedUser.roles = user.roles.map((role) => role?.name);
+      transformedUser.roles = (user.roles?.getItems() || []).map(
+        (role) => role?.name,
+      );
     }
 
     if (loadRelations && permissions?.length > 0) {

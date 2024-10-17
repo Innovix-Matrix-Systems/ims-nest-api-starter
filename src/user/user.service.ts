@@ -1,6 +1,7 @@
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -222,7 +223,9 @@ export class UserService {
         user.password,
       ))
     ) {
-      throw new ForbiddenException('Current password is incorrect');
+      throw new BadRequestException(
+        'Password or Current Password is incorrect',
+      );
     }
     user.password = await this.passwordService.hashPassword(password);
     await this.em.flush();
