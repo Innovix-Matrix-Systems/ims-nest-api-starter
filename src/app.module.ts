@@ -1,10 +1,13 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CommandModule } from 'nestjs-command';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
+import { XSecureInstallCommand } from './commands/xsecurity.command';
 import mikroOrmConfig from './config/mikro-orm.config';
 import { HealthModule } from './health/health.module';
+import { XSecurityMiddleware } from './middlewares/xsecurity.middleware';
 import { MiscModule } from './misc/misc.module';
 import { PermissionModule } from './permission/permission.module';
 import { RoleModule } from './role/role.module';
@@ -23,14 +26,20 @@ import { UserModule } from './user/user.module';
         mikroOrmConfig(configService),
       inject: [ConfigService],
     }),
-    UserModule,
+    CommandModule,
+    HealthModule,
     MiscModule,
-    AuthModule,
     PermissionModule,
     RoleModule,
-    HealthModule,
+    UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [XSecureInstallCommand],
 })
-export class AppModule {}
+// export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(XSecurityMiddleware).forRoutes('*');
+  }
+}

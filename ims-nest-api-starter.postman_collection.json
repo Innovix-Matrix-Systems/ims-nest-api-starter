@@ -2,13 +2,14 @@
 	"info": {
 		"_postman_id": "0f10bdbf-368f-47c9-8a59-e7d1586fae52",
 		"name": "ims-nest-api-starter",
+		"description": "# IMS-NEST-API-STARTER API Documentation\n\n## Introduction\n\nWelcome to the api documentation.\n`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications. This starter includes authentication, authorization, user management, role management, and role/permission-based access",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "29444436",
-		"_collection_link": "https://innovix-matrix-system.postman.co/workspace/Innovix-Matrix-System-Workspace~c0ff4f3a-4d52-490d-81f4-c33d60e51246/collection/29444436-0f10bdbf-368f-47c9-8a59-e7d1586fae52?action=share&source=collection_link&creator=29444436"
+		"_collection_link": "https://innovix-matrix-system.postman.co/workspace/c0ff4f3a-4d52-490d-81f4-c33d60e51246/collection/29444436-0f10bdbf-368f-47c9-8a59-e7d1586fae52?action=share&source=collection_link&creator=29444436"
 	},
 	"item": [
 		{
-			"name": "health",
+			"name": "Health",
 			"item": [
 				{
 					"name": "healthz",
@@ -46,7 +47,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "## Introduction\n\nProvides endpoints to check API app health\n\n## Endpoints\n\nList the available endpoints for this section, along with a brief description of what each endpoint does.\n\n### healthz\n\n| Type | Endpoint | Description |\n| --- | --- | --- |\n| `GET` | `/health` | checks the health of the app |\n| `GET` | `api/v1/ping` | ping the api! |"
 		},
 		{
 			"name": "Auth",
@@ -86,7 +88,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "## Introduction\n\nProvides endpoints to log into the app\n\n## Endpoints\n\nList the available endpoints for this section, along with a brief description of what each endpoint does.\n\n### Login\n\n| Type | Endpoint | Description |\n| --- | --- | --- |\n| `POST` | `/api/v1/login` | traditional login with email and password |"
 		},
 		{
 			"name": "Role & Permissions",
@@ -123,7 +126,8 @@
 							},
 							"response": []
 						}
-					]
+					],
+					"description": "## Endpoints\n\nList the available endpoints for this section, along with a brief description of what each endpoint does.\n\n### Login\n\n| Type | Endpoint | Description |\n| --- | --- | --- |\n| `GET` | `/api/v1/permission` | get list of all system permission |"
 				},
 				{
 					"name": "Role",
@@ -236,16 +240,18 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "4"
+											"value": "5"
 										}
 									]
 								}
 							},
 							"response": []
 						}
-					]
+					],
+					"description": "## Endpoints\n\nList the available endpoints for this section, along with a brief description of what each endpoint does.\n\n### Login\n\n| Type | Endpoint | Description |\n| --- | --- | --- |\n| `GET` | `/api/v1/role` | get list of all roles |\n| `POST` | `/api/v1/role` | insert role |\n| `DELETE` | `/api/v1/role/:id` | Delete role |"
 				}
-			]
+			],
+			"description": "## Introduction\n\nProvides endpoints of Role and Permission Management"
 		},
 		{
 			"name": "User",
@@ -591,6 +597,36 @@
 					"response": []
 				},
 				{
+					"name": "get permissions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/user/permissions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"permissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update Profile",
 					"request": {
 						"auth": {
@@ -669,7 +705,7 @@
 					"response": []
 				},
 				{
-					"name": "change use password",
+					"name": "change user password",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -714,7 +750,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "## Introduction\n\nProvides endpoints of User management Management\n\n## Endpoints\n\nList the available endpoints for this section, along with a brief description of what each endpoint does.\n\n### Login\n\n| Type | Endpoint | Description |\n| --- | --- | --- |\n| `GET` | `/api/v1/user` | get list of all users |\n| `POST` | `/api/v1/user` | insert user |\n| `GET` | `/api/v1/user/:id` | get user details |\n| `PATCH` | `/api/v1/user/:id` | update user |\n| `DELETE` | `/api/v1/user/:id` | Delete user |\n| `POST` | `/api/v1/user/:id/roles` | assign user roles |\n| `POST` | `/api/v1/user/:id/permissions` | assign user permissions |\n| `GET` | `/api/v1/user/profile` | get logged in user profile |\n| `GET` | `/api/v1/user/permissions` | get logged in user permissions |\n| `PATCH` | `/api/v1/user/profile` | update logged in user profile |\n| `PATCH` | `/api/v1/user/change-password` | update/reset logged in user password |\n| `PATCH` | `/api/v1/user/:id/change-password` | update/reset a user password |"
 		}
 	],
 	"event": [
