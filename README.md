@@ -6,7 +6,7 @@
 
 ## About this project
 
-`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications. This starter includes authentication, authorization, user management, role management, and role/permission-based access.
+`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications. This starter includes authentication, authorization, user management, role management, and role/permission-based access. Additionally, with the added security layer of XSECURITY, your APIs are safeguarded against unauthorized access, ensuring enhanced protection for your system.
 
 ## Getting Started Guide Without Docker
 
