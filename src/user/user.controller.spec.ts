@@ -32,6 +32,7 @@ describe('UserController', () => {
       remove: jest.fn(),
       assignRoles: jest.fn(),
       assignPermissions: jest.fn(),
+      getUserPermissions: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -101,6 +102,23 @@ describe('UserController', () => {
     expect(mockResponse.json).toHaveBeenCalledWith({
       data: userProfile,
       message: 'Profile fetched successfully',
+      statusCode: 200,
+      success: true,
+    });
+  });
+
+  it('should get user permissions', async () => {
+    const loggedInUser = { userId: 1 };
+    const permissions = ['user.test.view', 'user.test.edit'];
+    userService.getUserPermissions.mockResolvedValue(permissions);
+
+    await controller.getPermissions(loggedInUser, mockResponse);
+
+    expect(userService.getUserPermissions).toHaveBeenCalledWith(1);
+    expect(mockResponse.status).toHaveBeenCalledWith(200);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      data: permissions,
+      message: 'Permissions fetched successfully',
       statusCode: 200,
       success: true,
     });
@@ -209,6 +227,7 @@ describe('UserController', () => {
       success: true,
     });
   });
+
   it('should return 404 if user not found', async () => {
     const userId = '999';
     userService.findOne.mockResolvedValue(null);
