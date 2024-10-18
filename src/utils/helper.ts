@@ -1,3 +1,5 @@
+import { ConfigService } from '@nestjs/config';
+
 export const getPaginationLinks = (
   page: number,
   totalPages: number,
@@ -23,3 +25,14 @@ export const getPaginationLinks = (
 
   return links;
 };
+
+export function getConfigValue<T>(
+  key: string,
+  defaultValue?: T,
+  configService?: ConfigService,
+): T {
+  if (configService) {
+    return configService.get<T>(key) ?? defaultValue;
+  }
+  return (process.env[key] as T) ?? defaultValue;
+}

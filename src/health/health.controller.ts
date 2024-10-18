@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   DiskHealthIndicator,
   HealthCheck,
@@ -11,6 +12,7 @@ import {
 @Controller('health')
 export class HealthController {
   constructor(
+    private configService: ConfigService,
     private health: HealthCheckService,
     private http: HttpHealthIndicator,
     private db: MikroOrmHealthIndicator,
@@ -21,8 +23,9 @@ export class HealthController {
   @Get()
   @HealthCheck()
   check() {
-    const port = process.env.APP_PORT;
-    const appUrlToPing = `${process.env.APP_URL}:${port}/api/v1/ping`;
+    const port = this.configService.get<number>('APP_PORT');
+    const appUrl = this.configService.get<string>('APP_URL');
+    const appUrlToPing = `${appUrl}:${port}/api/v1/ping`;
     return this.health.check([
       () => this.http.pingCheck('ims-nest', appUrlToPing),
       () => this.db.pingCheck('database'),
