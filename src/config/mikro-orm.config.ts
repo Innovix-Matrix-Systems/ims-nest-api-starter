@@ -1,40 +1,56 @@
+import { Options } from '@mikro-orm/core';
 import { EntityGenerator } from '@mikro-orm/entity-generator';
 import { Migrator } from '@mikro-orm/migrations';
-import { Options } from '@mikro-orm/core';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { SeedManager } from '@mikro-orm/seeder';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
+import { getConfigValue } from '../utils/helper';
 
-const configService = new ConfigService();
-
-// Load environment variables from .env file
+// Load environment variables for CLI usage
 config();
 
-const getConfig = (): Options => ({
-  driver: PostgreSqlDriver,
-  dbName: process.env.DB_NAME || configService.get<string>('DB_NAME'),
-  host: process.env.DB_HOST || configService.get<string>('DB_HOST'),
-  port: process.env.DB_PORT
-    ? parseInt(process.env.DB_PORT, 10)
-    : configService.get<number>('DB_PORT'),
-  user: process.env.DB_USERNAME || configService.get<string>('DB_USERNAME'),
-  password: process.env.DB_PASSWORD || configService.get<string>('DB_PASSWORD'),
-  entities: ['dist/**/*.entity.js'],
-  entitiesTs: ['src/**/*.entity.ts'],
-  extensions: [Migrator, EntityGenerator, SeedManager],
-  migrations: {
-    path: 'src/database/migrations',
-    pathTs: 'src/database/migrations',
-  },
-  seeder: {
-    path: 'src/database/seeders',
-    pathTs: 'src/database/seeders',
-    defaultSeeder: 'DatabaseSeeder',
-  },
-  debug:
-    (process.env.APP_ENV || configService.get<string>('APP_ENV')) !==
-    'production',
-});
+export class MikroOrmConfig {
+  constructor(private readonly configService?: ConfigService) {}
 
-export default getConfig;
+  configureOptions(): Options {
+    return {
+      driver: PostgreSqlDriver,
+      dbName: getConfigValue<string>('DB_NAME', 'postgres', this.configService),
+      host: getConfigValue<string>('DB_HOST', 'localhost', this.configService),
+      port: Number(
+        getConfigValue<string>('DB_PORT', '5432', this.configService),
+      ),
+      user: getConfigValue<string>(
+        'DB_USERNAME',
+        'postgres',
+        this.configService,
+      ),
+      password: getConfigValue<string>('DB_PASSWORD', '', this.configService),
+      entities: ['dist/**/*.entity.js'],
+      entitiesTs: ['src/**/*.entity.ts'],
+      extensions: [Migrator, EntityGenerator, SeedManager],
+      migrations: {
+        path: 'src/database/migrations',
+        pathTs: 'src/database/migrations',
+      },
+      seeder: {
+        path: 'src/database/seeders',
+        pathTs: 'src/database/seeders',
+        defaultSeeder: 'DatabaseSeeder',
+      },
+      debug: getConfigValue<string>('APP_ENV') !== 'production',
+      pool: {
+        min: Number(
+          getConfigValue<string>('DB_POOL_MIN', '2', this.configService),
+        ),
+        max: Number(
+          getConfigValue<string>('DB_POOL_MAX', '10', this.configService),
+        ),
+      },
+    };
+  }
+}
+
+export default (configService?: ConfigService): Options =>
+  new MikroOrmConfig(configService).configureOptions();

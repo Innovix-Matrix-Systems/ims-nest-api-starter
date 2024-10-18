@@ -17,9 +17,9 @@ import { BaseController } from '../common/controllers/base.controller';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { PermissionGuard } from '../common/guards/permission.guard';
 import { AuthUser } from '../decorators/auth-user.decorator';
-import { Permissions } from '../decorators/permissions.decorator';
 import { PermissionName } from '../enum/permission.enum';
 import { ValidationExceptionFilter } from '../filters/validation-exception.filter';
+import { Permissions } from './../decorators/permissions.decorator';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PermissionAssignDto } from './dto/permission-assign.dto';
@@ -52,7 +52,6 @@ export class UserController extends BaseController {
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   async getProfile(@AuthUser() LoggedInUser, @Res() res: Response) {
-    console.log(LoggedInUser);
     const id = LoggedInUser.userId;
     const user = await this.userService.findOne(+id);
     return this.sendSuccessResponse(
@@ -98,6 +97,19 @@ export class UserController extends BaseController {
     return this.sendSuccessResponse(
       user,
       'Password updated successfully',
+      200,
+      res,
+    );
+  }
+
+  @Get('/permissions')
+  @UseGuards(JwtAuthGuard)
+  async getPermissions(@AuthUser() LoggedInUser, @Res() res: Response) {
+    const id = LoggedInUser.userId;
+    const permissions = await this.userService.getUserPermissions(+id);
+    return this.sendSuccessResponse(
+      permissions,
+      'Permissions fetched successfully',
       200,
       res,
     );
