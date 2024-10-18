@@ -52,7 +52,6 @@ export class UserController extends BaseController {
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   async getProfile(@AuthUser() LoggedInUser, @Res() res: Response) {
-    console.log(LoggedInUser);
     const id = LoggedInUser.userId;
     const user = await this.userService.findOne(+id);
     return this.sendSuccessResponse(
