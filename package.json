@@ -25,6 +25,7 @@
     "migration:fresh": "npx mikro-orm migration:fresh --seed",
     "seeder:create": "npx mikro-orm seeder:create",
     "seeder:run": "npx mikro-orm seeder:run",
+    "xsecurity:install": "cross-env CLI_PATH=./dist/cli.js npx nestjs-command xsecurity:install",
     "prepare": "husky"
   },
   "dependencies": {
@@ -50,12 +51,14 @@
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
     "ims-nest-api-starter": "file:",
+    "nestjs-command": "^3.1.4",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.13.0",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -68,8 +71,10 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^6.0.0",
+    "@types/yargs": "^17.0.33",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",

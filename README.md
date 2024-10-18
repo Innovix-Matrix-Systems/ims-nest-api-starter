@@ -118,12 +118,14 @@
     ```bash
     docker-compose exec app bash
     ```
+
     Once inside the container, execute the following commands:
 
     ```bash
     npm run migration:up
     npm run seeder:run
     ```
+
     This will apply any pending migrations and populate the database with seed data.
 
 4.  **Git hook for Check**
@@ -132,7 +134,6 @@
     ```bash
     npx husky install
     ```
-
 
 ## Health Check
 
@@ -185,6 +186,37 @@ Run tests using Jest:
 npm run test
 ```
 
+## Xsecurity Setup
+
+IMS introduces an additional layer of security, enhancing the API's reliability and resilience. With this system, only applications possessing a shared XSECURITY_TOKEN can send API requests to the server; others will be blocked. To get started, follow the guide below.
+
+Getting Started
+By default, XSecure is disabled! To enable it, set the XSECURITY_ENABLED value to true in your .env file:
+
+```bash
+XSECURITY_ENABLED=true
+```
+
+Other wise it will be disabled.
+
+Installation
+Execute the following command to set up XSECURITY:
+
+```bash
+npm run xsecurity:install
+```
+This command generates a secret for your application and updates your .env file with the `XSECURITY_SECRET` field.
+
+After running the command, you will receive output similar to this:
+
+```bash
+Generated secret: N+6WQq7RjqvE+KhMRFDtk1n09M98lBAb/P/8j/I3w/7ibNzgbJeg2a+gBjNpPbMgyXSgq0sebXzYwPwnFSmleg==
+XSECURITY_SECRET key has been updated in the .env file.
+```
+Use this secret in your frontend or mobile app to generate a short-lived XSecure token, which will be verified by the backend server.
+
+For more information on how to use XSECURITY, refer to the [XSECURITY Guide](https://github.com/Innovix-Matrix-Systems/ims-laravel-api-starter/wiki/XSECURE-setup).
+
 ## Extra CLI Commands
 
 ### Generate MikroORM Entities:
@@ -225,6 +257,10 @@ You can also run this command to see all the CLI commands available in your proj
 ```bash
 nest generate --help
 ```
+
+You can create custom CLI commands tailored to your specific needs using the [nestjs-command](https://www.npmjs.com/package/nestjs-command) package. 
+This project already includes integration with [nestjs-command](https://www.npmjs.com/package/nestjs-command) package.
+For reference, check out the `xsecurity` command implemented in [src/commands/xsecurity.command.ts](https://github.com/Innovix-Matrix-System/ims-nest-api-starter/blob/master/src/commands/xsecurity.command.ts).
 
 ## Authors
 
