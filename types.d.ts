@@ -26,31 +26,3 @@ interface PaginatedParams {
   searchFields?: string[];
   selectFields?: Array<{ [key: string]: boolean | number | string }>;
 }
-
-interface JwtEncodeData {
-  email: string;
-  sub: number;
-}
-
-interface UserResponse {
-  id: number;
-  name: string;
-  email: string;
-  password?: string;
-  device?: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt?: Date;
-  lastLoginAt?: Date;
-  roles?: string[];
-  permissions?: string[];
-}
-
-interface LoginResponse extends UserResponse {
-  AccessToken: string;
-}
-
-interface ValidateUserResponse {
-  user: Partial<UserResponse>;
-  errors: string[];
-}

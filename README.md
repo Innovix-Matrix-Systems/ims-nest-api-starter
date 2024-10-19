@@ -260,7 +260,7 @@ nest generate --help
 
 You can create custom CLI commands tailored to your specific needs using the [nestjs-command](https://www.npmjs.com/package/nestjs-command) package. 
 This project already includes integration with [nestjs-command](https://www.npmjs.com/package/nestjs-command) package.
-For reference, check out the `xsecurity` command implemented in [src/commands/xsecurity.command.ts](https://github.com/Innovix-Matrix-System/ims-nest-api-starter/blob/master/src/commands/xsecurity.command.ts).
+For reference, check out the `xsecurity` command implemented in [src/commands/xsecurity.command.ts](https://github.com/Innovix-Matrix-Systems/ims-nest-api-starter/blob/main/src/commands/xsecurity.command.ts).
 
 ## Authors
 

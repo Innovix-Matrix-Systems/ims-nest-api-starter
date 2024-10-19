@@ -4,6 +4,7 @@ import {
   Injectable,
   NestMiddleware,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { NextFunction, Request, Response } from 'express';
 
@@ -16,8 +17,10 @@ export class XSecurityMiddleware implements NestMiddleware {
     { count: number; resetTime: number }
   >();
 
+  constructor(private configService: ConfigService) {}
+
   use(req: Request, res: Response, next: NextFunction) {
-    if (process.env.XSECURITY_ENABLED !== 'true') {
+    if (this.configService.get<string>('XSECURITY_ENABLED') !== 'true') {
       return next();
     }
 
@@ -66,7 +69,7 @@ export class XSecurityMiddleware implements NestMiddleware {
   }
 
   private isValidXSecureToken(signedToken: string): boolean {
-    const sharedSecretKey = process.env.XSECURITY_SECRET;
+    const sharedSecretKey = this.configService.get<string>('XSECURITY_SECRET');
     const parts = signedToken.split('.');
     if (parts.length !== 2) return false;
 
