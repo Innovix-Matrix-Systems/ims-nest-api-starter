@@ -1,8 +1,8 @@
 import type { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { Role } from '../../entities/role.entity';
-import { User } from '../../entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { User } from '../../modules/user/entities/user.entity';
+import { Role } from '../../modules/role/entities/role.entity';
 
 export class UserSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {

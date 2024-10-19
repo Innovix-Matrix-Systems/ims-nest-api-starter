@@ -1,4 +1,4 @@
-import { Res } from '@nestjs/common';
+import { HttpStatus, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 export class BaseController {
@@ -6,7 +6,7 @@ export class BaseController {
     data: any[],
     pageData: PaginatedMeta,
     message = '',
-    statusCode = 200,
+    statusCode = HttpStatus.OK,
     res: Response,
   ) {
     const response = {
@@ -31,7 +31,7 @@ export class BaseController {
   sendSuccessResponse(
     result: any,
     message = '',
-    statusCode = 200,
+    statusCode = HttpStatus.OK,
     @Res() res: Response,
   ) {
     const response = {
@@ -47,7 +47,7 @@ export class BaseController {
   sendErrorResponse(
     error: string,
     errorMessages = [],
-    statusCode = 500,
+    statusCode = HttpStatus.INTERNAL_SERVER_ERROR,
     @Res() res: Response,
   ) {
     if (errorMessages.length === 0) {

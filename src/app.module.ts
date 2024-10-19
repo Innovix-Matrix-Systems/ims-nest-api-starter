@@ -3,15 +3,15 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommandModule } from 'nestjs-command';
 import { AppController } from './app.controller';
-import { AuthModule } from './auth/auth.module';
 import { XSecureInstallCommand } from './commands/xsecurity.command';
 import mikroOrmConfig from './config/mikro-orm.config';
-import { HealthModule } from './health/health.module';
 import { XSecurityMiddleware } from './middlewares/xsecurity.middleware';
-import { MiscModule } from './misc/misc.module';
-import { PermissionModule } from './permission/permission.module';
-import { RoleModule } from './role/role.module';
-import { UserModule } from './user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { HealthModule } from './modules/health/health.module';
+import { MiscModule } from './modules/misc/misc.module';
+import { PermissionModule } from './modules/permission/permission.module';
+import { RoleModule } from './modules/role/role.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [

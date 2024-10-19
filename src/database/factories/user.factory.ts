@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from '@mikro-orm/seeder';
 import * as bcrypt from 'bcrypt';
-import { User } from '../../entities/user.entity';
+import { User } from '../../modules/user/entities/user.entity';
 
 export class UserFactory extends Factory<User> {
   model = User;
