@@ -205,6 +205,7 @@ Execute the following command to set up XSECURITY:
 ```bash
 npm run xsecurity:install
 ```
+
 This command generates a secret for your application and updates your .env file with the `XSECURITY_SECRET` field.
 
 After running the command, you will receive output similar to this:
@@ -213,6 +214,7 @@ After running the command, you will receive output similar to this:
 Generated secret: N+6WQq7RjqvE+KhMRFDtk1n09M98lBAb/P/8j/I3w/7ibNzgbJeg2a+gBjNpPbMgyXSgq0sebXzYwPwnFSmleg==
 XSECURITY_SECRET key has been updated in the .env file.
 ```
+
 Use this secret in your frontend or mobile app to generate a short-lived XSecure token, which will be verified by the backend server.
 
 For more information on how to use XSECURITY, refer to the [XSECURITY Guide](https://github.com/Innovix-Matrix-Systems/ims-laravel-api-starter/wiki/XSECURE-setup).
@@ -258,9 +260,28 @@ You can also run this command to see all the CLI commands available in your proj
 nest generate --help
 ```
 
-You can create custom CLI commands tailored to your specific needs using the [nestjs-command](https://www.npmjs.com/package/nestjs-command) package. 
+You can create custom CLI commands tailored to your specific needs using the [nestjs-command](https://www.npmjs.com/package/nestjs-command) package.
 This project already includes integration with [nestjs-command](https://www.npmjs.com/package/nestjs-command) package.
 For reference, check out the `xsecurity` command implemented in [src/commands/xsecurity.command.ts](https://github.com/Innovix-Matrix-Systems/ims-nest-api-starter/blob/main/src/commands/xsecurity.command.ts).
+
+## Custom Module Creation Command
+
+This project includes a custom script to generate a NestJS module along with additional folder structures for better organization.
+
+### What this command does:
+
+- Creates a new module using the NestJS CLI.
+- Generates the associated controller and service.
+- Adds additional folders (`dto`, `interfaces`, `repositories`, `helpers`) inside the module folder for organizing your code.
+
+### How to Use:
+
+1. Open your terminal and navigate to the project root.
+2. Run the following command, replacing `yourModuleName` with the name of the module you want to create:
+
+   ```bash
+   npm run create:module yourModuleName
+   ```
 
 ## Authors
 
