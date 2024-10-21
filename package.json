@@ -27,7 +27,7 @@
     "seeder:run": "npx mikro-orm seeder:run",
     "xsecurity:install": "cross-env CLI_PATH=./dist/cli.js npx nestjs-command xsecurity:install",
     "prepare": "husky",
-    "create:module": "node ./scripts/create-module.js"
+    "create:module": "cross-env CLI_PATH=./dist/cli.js npx nestjs-command create:module"
 
   },
   "dependencies": {

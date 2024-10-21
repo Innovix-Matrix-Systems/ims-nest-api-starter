@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { CommandModule } from 'nestjs-command';
 import { AppController } from './app.controller';
+import { CreateModuleCommand } from './commands/create-module.command';
 import { XSecureInstallCommand } from './commands/xsecurity.command';
 import mikroOrmConfig from './config/mikro-orm.config';
 import { XSecurityMiddleware } from './middlewares/xsecurity.middleware';
@@ -53,6 +54,7 @@ import { UserModule } from './modules/user/user.module';
       useClass: ThrottlerGuard,
     },
     XSecureInstallCommand,
+    CreateModuleCommand,
   ],
 })
 export class AppModule implements NestModule {

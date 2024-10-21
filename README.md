@@ -272,7 +272,7 @@ This project includes a custom script to generate a NestJS module along with add
 
 - Creates a new module using the NestJS CLI.
 - Generates the associated controller and service.
-- Adds additional folders (`dto`, `interfaces`, `repositories`, `helpers`) inside the module folder for organizing your code.
+- Adds additional folders (`dto`, `types`, `repositories`, `helpers`) inside the module folder for organizing your code.
 
 ### How to Use:
 
@@ -280,7 +280,13 @@ This project includes a custom script to generate a NestJS module along with add
 2. Run the following command, replacing `yourModuleName` with the name of the module you want to create:
 
    ```bash
-   npm run create:module yourModuleName
+   npm run create:module <moduleName>
+   ```
+
+   For example, to create a module named `product`, you would run:
+
+   ```bash
+   npm run create:module product
    ```
 
 ## Authors
