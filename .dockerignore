@@ -5,3 +5,5 @@
 .husky/*
 .vscode/*
 ims-nest-api-starter.postman_collection.json
+/dist
+/build
