@@ -1,9 +1,9 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { execSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Function to execute shell commands
-const runCommand = (command) => {
+const runCommand = (command: string): void => {
   try {
     execSync(command, { stdio: 'inherit' });
   } catch (error) {
@@ -12,7 +12,7 @@ const runCommand = (command) => {
 };
 
 // Function to create directories
-const createDir = (dirPath) => {
+const createDir = (dirPath: string): void => {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
     console.log(`Created directory: ${dirPath}`);
@@ -22,7 +22,7 @@ const createDir = (dirPath) => {
 };
 
 // Main function to generate module and folders
-const createModule = (moduleName) => {
+const createModule = (moduleName: string): void => {
   const modulePath = `modules/${moduleName}`;
 
   // Generate module, controller, and service using Nest CLI
@@ -33,11 +33,21 @@ const createModule = (moduleName) => {
   // Create additional folders inside the module
   const basePath = path.join(__dirname, '../src', modulePath);
   createDir(`${basePath}/dto`);
-  createDir(`${basePath}/interfaces`);
   createDir(`${basePath}/repositories`);
   createDir(`${basePath}/helpers`);
+  createFile(`${basePath}/types.d.ts`, '// Type definitions go here\n');
 
   console.log(`Module ${moduleName} created with additional folders.`);
+};
+
+// Utility function to create a file with content
+const createFile = (filePath: string, content: string): void => {
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, content);
+    console.log(`Created file: ${filePath}`);
+  } else {
+    console.log(`File already exists: ${filePath}`);
+  }
 };
 
 // Get the module name from the command-line arguments
