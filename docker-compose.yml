@@ -1,23 +1,17 @@
 services:
   app:
-    image: ims-nest-api-starter
     container_name: ims-nest-api-starter
     build:
       context: .
       dockerfile: Dockerfile
+    env_file: .env.docker
     ports:
       - "8000:8000"
     volumes:
-      - .:/var/www/ims-nest-api-starter
-      - node_modules:/var/www/ims-nest-api-starter/node_modules
+      - ./src:/var/www/ims-nest-api-starter/src
+      - ./test:/var/www/ims-nest-api-starter/test
     depends_on:
       - db
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_NAME=ims_nest
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
     restart: unless-stopped
 
   db:
@@ -34,4 +28,3 @@ services:
 
 volumes:
   postgres_data:
-  node_modules:
