@@ -266,13 +266,14 @@ For reference, check out the `xsecurity` command implemented in [src/commands/xs
 
 ## Custom Module Creation Command
 
-This project includes a custom script to generate a NestJS module along with additional folder structures for better organization.
+This project includes a custom script to generate a new NestJS module with a well-organized folder structure.
 
 ### What this command does:
 
 - Creates a new module using the NestJS CLI.
 - Generates the associated controller and service.
-- Adds additional folders (`dto`, `types`, `repositories`, `helpers`) inside the module folder for organizing your code.
+- Adds additional folders (`dto`, `repositories`,) inside the module folder for organizing your code.
+- Creates a `types.d.ts` file for type definitions.
 
 ### How to Use:
 
@@ -292,6 +293,10 @@ This project includes a custom script to generate a NestJS module along with add
 ## Authors
 
 - [@AHS12](https://www.github.com/AHS12)
+
+## Contributors
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
 
 ## License
 
