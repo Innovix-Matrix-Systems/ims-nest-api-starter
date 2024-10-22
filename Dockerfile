@@ -20,4 +20,4 @@ EXPOSE 8000
 COPY . .
 
 # Set the entrypoint command to wait for the database and then start the application
-CMD wait-for-it db:5432 -- npm run start:dev --preserveWatchOutput
+CMD ["wait-for-it", "db:5432", "--", "npm", "run", "start:dev", "--preserveWatchOutput"]
