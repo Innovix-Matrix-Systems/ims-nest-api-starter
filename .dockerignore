@@ -7,3 +7,5 @@
 ims-nest-api-starter.postman_collection.json
 /dist
 /build
+Dockerfile
+README.md
