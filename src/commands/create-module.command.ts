@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
-import { Command } from 'nestjs-command';
+import { Command, Positional } from 'nestjs-command';
 import * as path from 'path';
 
 @Injectable()
@@ -10,8 +10,15 @@ export class CreateModuleCommand {
     command: 'create:module <moduleName>',
     describe: 'Create a new module with a predefined structure',
   })
-  async run(): Promise<void> {
-    const moduleName = process.argv[3];
+  async run(
+    @Positional({
+      name: 'moduleName',
+      describe: 'The name of the module',
+      type: 'string',
+    })
+    moduleName: string
+
+  ): Promise<void> {
 
     if (!moduleName) {
       console.error('Please provide a module name.');
@@ -30,7 +37,6 @@ export class CreateModuleCommand {
     // Create additional folders inside the module
     this.createDir(`${modulePath}/dto`);
     this.createDir(`${modulePath}/repositories`);
-    this.createDir(`${modulePath}/helpers`);
     this.createFile(
       `${modulePath}/types.d.ts`,
       '// Type definitions go here\n',
