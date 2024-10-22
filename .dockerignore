@@ -9,3 +9,4 @@ ims-nest-api-starter.postman_collection.json
 /build
 Dockerfile
 README.md
+docker-compose.yml
