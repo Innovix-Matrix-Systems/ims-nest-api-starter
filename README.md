@@ -296,6 +296,33 @@ This project includes a custom script to generate a new NestJS module with a wel
 
 ## Contributors
 <!-- readme: contributors -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/AHS12">
+                    <img src="https://avatars.githubusercontent.com/u/25058208?v=4" width="100;" alt="AHS12"/>
+                    <br />
+                    <sub><b>Azizul Hakim</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/ajshovon">
+                    <img src="https://avatars.githubusercontent.com/u/61104583?v=4" width="100;" alt="ajshovon"/>
+                    <br />
+                    <sub><b>shovon</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/amanullah7649">
+                    <img src="https://avatars.githubusercontent.com/u/45013120?v=4" width="100;" alt="amanullah7649"/>
+                    <br />
+                    <sub><b>MD: AMAN ULLAH</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: contributors -end -->
 
 ## License
