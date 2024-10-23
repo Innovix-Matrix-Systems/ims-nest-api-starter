@@ -11,3 +11,8 @@ interface UserResponse {
   roles?: string[];
   permissions?: string[];
 }
+
+interface UserPaginatedList {
+  data: Partial<UserResponse>[];
+  meta: PaginatedMeta;
+}

@@ -17,10 +17,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserTransformer } from './transformer/user.transformer';
 
-interface UserPaginatedList {
-  data: Partial<UserResponse>[];
-  meta: PaginatedMeta;
-}
 @Injectable()
 export class UserService {
   // List of role ids that can't be assigned (ex: SuperAdmin)
@@ -252,6 +248,10 @@ export class UserService {
     userId: number,
     roleIds: number[],
   ): Promise<Partial<UserResponse>> {
+    //filter out unassignable roles
+    const roleIdsToAssign = roleIds.filter(
+      (roleId) => !this.UNASSIGNABLE_ROLE_IDS.includes(roleId),
+    );
     const user = await this.userRepository.findOne(
       { id: userId },
       {
@@ -261,7 +261,7 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    const roles = await this.em.find(Role, { id: { $in: roleIds } });
+    const roles = await this.em.find(Role, { id: { $in: roleIdsToAssign } });
 
     user.roles.set(roles);
     await this.em.flush();

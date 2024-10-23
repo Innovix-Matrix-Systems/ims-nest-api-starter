@@ -139,7 +139,7 @@ describe('RoleService', () => {
     expect(mockEntityManager.removeAndFlush).not.toHaveBeenCalled();
   });
 
-  it('should delete a system role', async () => {
+  it('should delete a role', async () => {
     await service.delete(4);
 
     expect(mockRoleRepository.findOne).toHaveBeenCalledWith(4);
