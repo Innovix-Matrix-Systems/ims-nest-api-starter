@@ -4,7 +4,7 @@ import { Response } from 'express';
 export class BaseController {
   sendPaginatedResponse(
     data: any[],
-    pageData: PaginatedMeta,
+    pageData: PaginationMeta,
     message = '',
     statusCode = HttpStatus.OK,
     res: Response,
@@ -18,8 +18,6 @@ export class BaseController {
         currentPage: pageData.currentPage,
         from: pageData.from,
         lastPage: pageData.lastPage,
-        // links: pageData.links || [],
-        // path: pageData.path || '',
         perPage: pageData.perPage,
         to: pageData.to,
         total: pageData.total,

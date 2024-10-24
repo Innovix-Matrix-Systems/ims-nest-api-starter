@@ -28,7 +28,6 @@
     "xsecurity:install": "cross-env CLI_PATH=./dist/cli.js npx nestjs-command xsecurity:install",
     "prepare": "husky",
     "create:module": "cross-env CLI_PATH=./dist/cli.js npx nestjs-command create:module"
-
   },
   "dependencies": {
     "@faker-js/faker": "^9.0.3",
@@ -97,15 +96,19 @@
       "ts"
     ],
     "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
+    "testRegex": "modules/.*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "modules/**/*.(t|j)s",
+      "!**/*.d.ts"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "modulePathIgnorePatterns": [
+      "types.d.ts"
+    ]
   },
   "mikro-orm": {
     "useTsNode": true,
