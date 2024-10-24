@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Response } from 'express';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -11,7 +12,6 @@ import { RoleAssignDto } from './dto/role-assign.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { HttpStatus } from '@nestjs/common';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -201,7 +201,7 @@ describe('UserController', () => {
     };
     userService.findAll.mockResolvedValue(mockPaginatedResponse);
 
-    await controller.findAll(1, 10, '', undefined, mockResponse);
+    await controller.findAll(1, 10, 'ASC', 'createdAt', '', true, mockResponse);
 
     expect(userService.findAll).toHaveBeenCalled();
     expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.OK);

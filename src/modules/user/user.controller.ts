@@ -122,6 +122,8 @@ export class UserController extends BaseController {
   async findAll(
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('perPage', ParseIntPipe) perPage: number = 10,
+    @Query('orderDirection') orderDirection: 'ASC' | 'DESC' = 'ASC',
+    @Query('orderBy') orderBy: string = 'createdAt',
     @Query('search') search: string = '',
     @Query('isActive') isActive: boolean,
     @Res() res: Response,
@@ -131,9 +133,11 @@ export class UserController extends BaseController {
     if (isActive !== undefined) {
       selectFields.push({ isActive: isActive });
     }
-    const params: PaginatedParams = {
+    const params: FilterWithPaginationParams = {
       page,
       perPage,
+      orderBy,
+      orderDirection,
       search,
       searchFields,
       selectFields,

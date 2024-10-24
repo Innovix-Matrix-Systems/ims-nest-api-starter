@@ -16,11 +16,8 @@ import { ChangeSelfPasswordDto } from './dto/reset-self-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserTransformer } from './transformer/user.transformer';
+import { FilterService } from '../misc/filter.service';
 
-interface UserPaginatedList {
-  data: Partial<UserResponse>[];
-  meta: PaginatedMeta;
-}
 @Injectable()
 export class UserService {
   // List of role ids that can't be assigned (ex: SuperAdmin)
@@ -32,6 +29,7 @@ export class UserService {
     private readonly userRepository: EntityRepository<User>,
     private readonly em: EntityManager,
     private readonly passwordService: PasswordService,
+    private readonly filterService: FilterService,
     private readonly userTransformer: UserTransformer,
   ) {}
 
@@ -50,45 +48,22 @@ export class UserService {
   }
 
   // Find all users
-  async findAll(params: PaginatedParams): Promise<UserPaginatedList> {
-    const { page, perPage, search, searchFields, selectFields } = params;
-    const where: any = {};
-    //map search fields
-    if (search && searchFields && searchFields.length > 0) {
-      where.$or = searchFields.map((field) => ({
-        [field]: { $ilike: `%${search}%` }, //case-insensitive partial match
-      }));
-    }
-    // map filters
-    if (selectFields && selectFields.length > 0) {
-      selectFields.forEach((field) => {
-        Object.assign(where, field);
-      });
-    }
-    const [users, totalCount] = await this.userRepository.findAndCount(where, {
-      populate: ['roles'],
-      limit: perPage,
-      offset: (page - 1) * perPage,
-    });
-    const mappedUsers = this.userTransformer.transformMany(users, {
+  async findAll(
+    params: FilterWithPaginationParams,
+  ): Promise<UserPaginatedList> {
+    const { data, meta } = await this.filterService.filter(
+      this.userRepository,
+      params,
+      ['id', 'name', 'email', 'createdAt'],
+      ['roles'],
+    );
+    const mappedUsers = this.userTransformer.transformMany(data, {
       loadRelations: true,
     });
-    const totalPages = Math.ceil(totalCount / perPage);
-    const from = (page - 1) * perPage + 1;
-    const to = Math.min(page * perPage, totalCount);
-
-    const pageData = {
-      currentPage: page,
-      from: from,
-      lastPage: totalPages,
-      perPage: perPage,
-      to: to,
-      total: totalCount,
-    };
 
     return {
       data: mappedUsers,
-      meta: pageData,
+      meta,
     };
   }
 
@@ -252,6 +227,10 @@ export class UserService {
     userId: number,
     roleIds: number[],
   ): Promise<Partial<UserResponse>> {
+    //filter out unassignable roles
+    const roleIdsToAssign = roleIds.filter(
+      (roleId) => !this.UNASSIGNABLE_ROLE_IDS.includes(roleId),
+    );
     const user = await this.userRepository.findOne(
       { id: userId },
       {
@@ -261,7 +240,7 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    const roles = await this.em.find(Role, { id: { $in: roleIds } });
+    const roles = await this.em.find(Role, { id: { $in: roleIdsToAssign } });
 
     user.roles.set(roles);
     await this.em.flush();

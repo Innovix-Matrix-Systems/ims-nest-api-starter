@@ -4,7 +4,7 @@ export const getPaginationLinks = (
   page: number,
   totalPages: number,
   path: string,
-): PaginatedLinks[] => {
+): PaginationLinks[] => {
   const links = [
     {
       url: page > 1 ? `${path}?page=${page - 1}` : null,

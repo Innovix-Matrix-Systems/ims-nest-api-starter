@@ -5,7 +5,7 @@
 		"description": "# IMS-NEST-API-STARTER API Documentation\n\n## Introduction\n\nWelcome to the api documentation.\n`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications. This starter includes authentication, authorization, user management, role management, and role/permission-based access",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "29444436",
-		"_collection_link": "https://innovix-matrix-system.postman.co/workspace/c0ff4f3a-4d52-490d-81f4-c33d60e51246/collection/29444436-0f10bdbf-368f-47c9-8a59-e7d1586fae52?action=share&source=collection_link&creator=29444436"
+		"_collection_link": "https://innovix-matrix-system.postman.co/workspace/Innovix-Matrix-System-Workspace~c0ff4f3a-4d52-490d-81f4-c33d60e51246/collection/29444436-0f10bdbf-368f-47c9-8a59-e7d1586fae52?action=share&source=collection_link&creator=29444436"
 	},
 	"item": [
 		{
@@ -284,7 +284,7 @@
 							"query": [
 								{
 									"key": "search",
-									"value": "trevor",
+									"value": "john",
 									"description": "search my name, email",
 									"disabled": true
 								},
@@ -301,6 +301,16 @@
 								{
 									"key": "perPage",
 									"value": "10"
+								},
+								{
+									"key": "orderBy",
+									"value": "createdAt",
+									"disabled": true
+								},
+								{
+									"key": "orderDirection",
+									"value": "desc",
+									"disabled": true
 								}
 							]
 						}
@@ -467,7 +477,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "48"
+									"value": "4"
 								}
 							]
 						}

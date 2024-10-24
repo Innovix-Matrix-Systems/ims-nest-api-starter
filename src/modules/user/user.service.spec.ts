@@ -2,11 +2,11 @@ import { Collection, EntityManager, EntityRepository } from '@mikro-orm/core';
 import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { User } from './entities/user.entity';
 import { createMockCollection } from '../../mocks/collection.mock';
 import { MiscModule } from '../misc/misc.module';
 import { Permission } from '../permission/entities/permission.entity';
 import { Role } from '../role/entities/role.entity';
+import { User } from './entities/user.entity';
 import { UserTransformer } from './transformer/user.transformer';
 import { UserService } from './user.service';
 
@@ -84,6 +84,22 @@ describe('UserService', () => {
         roles: roleCollection,
         permissions: permissionCollection,
       }),
+      findAndCount: jest.fn().mockReturnValue([
+        [
+          {
+            id: 1,
+            name: 'John Doe',
+            email: '1q3U8@example.com',
+            isActive: true,
+            lastLoginAt: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            roles: roleCollection,
+            permissions: permissionCollection,
+          },
+        ],
+        1,
+      ]),
       create: jest.fn().mockImplementation((dto) => ({
         ...dto,
         id: 1, // Assign an ID for the mock user
@@ -132,6 +148,20 @@ describe('UserService', () => {
     expect(user.email).toEqual(createUserDto.email);
     expect(user.name).toEqual(createUserDto.name);
     expect(user.isActive).toEqual(createUserDto.isActive);
+  });
+
+  it('should find all users', async () => {
+    const params: FilterWithPaginationParams = {
+      page: 1,
+      perPage: 10,
+      orderBy: 'name',
+      orderDirection: 'ASC',
+    };
+    const users = await service.findAll(params);
+    expect(mockUserRepository.findAndCount).toHaveBeenCalled();
+    expect(users.data.length).toEqual(1);
+    expect(users.meta.total).toEqual(1);
+    expect(users.meta.lastPage).toEqual(1);
   });
 
   it('should find a user by ID', async () => {
