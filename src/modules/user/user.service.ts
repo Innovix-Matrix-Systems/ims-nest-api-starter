@@ -6,6 +6,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { CacheService } from '../cache/cache.service';
+import { FilterService } from '../misc/filter.service';
 import { PasswordService } from '../misc/password.service';
 import { Permission } from '../permission/entities/permission.entity';
 import { Role } from '../role/entities/role.entity';
@@ -16,7 +18,6 @@ import { ChangeSelfPasswordDto } from './dto/reset-self-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserTransformer } from './transformer/user.transformer';
-import { FilterService } from '../misc/filter.service';
 
 @Injectable()
 export class UserService {
@@ -29,9 +30,15 @@ export class UserService {
     private readonly userRepository: EntityRepository<User>,
     private readonly em: EntityManager,
     private readonly passwordService: PasswordService,
+    private readonly cacheService: CacheService,
     private readonly filterService: FilterService,
     private readonly userTransformer: UserTransformer,
   ) {}
+
+  private USER_CACHE_PREFIX = 'user:';
+  private USER_CACHE_DEFAULT_TTL = 3600 * 24;
+  private USER_PAGINATED_CACHE_PREFIX = 'user-paginated';
+  private USER_PAGINATED_CACHE_DEFAULT_TTL = 600;
 
   // Create a new user
   async create(createUserDto: CreateUserDto): Promise<Partial<UserResponse>> {
@@ -44,6 +51,7 @@ export class UserService {
     createUserDto.roles = roleIds;
     const user = this.userRepository.create(createUserDto);
     await this.em.persistAndFlush(user);
+    await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
     return this.userTransformer.transform(user);
   }
 
@@ -51,6 +59,10 @@ export class UserService {
   async findAll(
     params: FilterWithPaginationParams,
   ): Promise<UserPaginatedList> {
+    const cachedUsers = await this.cacheService.get<UserPaginatedList>(
+      `${this.USER_PAGINATED_CACHE_PREFIX}-${JSON.stringify(params)}`,
+    );
+    if (cachedUsers) return cachedUsers;
     const { data, meta } = await this.filterService.filter(
       this.userRepository,
       params,
@@ -61,21 +73,42 @@ export class UserService {
       loadRelations: true,
     });
 
-    return {
+    const result = {
       data: mappedUsers,
       meta,
     };
+
+    await this.cacheService.set(
+      `${this.USER_PAGINATED_CACHE_PREFIX}-${JSON.stringify(params)}`,
+      result,
+      this.USER_PAGINATED_CACHE_DEFAULT_TTL,
+    );
+
+    return result;
   }
 
   // Find one user by ID
   async findOne(id: number): Promise<Partial<UserResponse> | null> {
+    const cachedUser =
+      await this.cacheService.get<Partial<UserResponse> | null>(
+        `${this.USER_CACHE_PREFIX}${id}`,
+      );
+    if (cachedUser) return cachedUser;
     const user = await this.userRepository.findOne(
       { id },
       { populate: ['roles'] },
     );
-    return this.userTransformer.transform(user, {
+    const userResponse = this.userTransformer.transform(user, {
       loadRelations: true,
     });
+
+    await this.cacheService.set(
+      `${this.USER_CACHE_PREFIX}${id}`,
+      userResponse,
+      this.USER_CACHE_DEFAULT_TTL,
+    );
+
+    return userResponse;
   }
 
   async findByEmail(email: string): Promise<Partial<User> | null> {
@@ -142,6 +175,7 @@ export class UserService {
     delete updateUserDto.roles;
     this.userRepository.assign(user, updateUserDto);
     await this.em.flush();
+    this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
     return this.userTransformer.transform(user);
   }
 
@@ -152,6 +186,8 @@ export class UserService {
     }
     this.userRepository.assign(user, { lastLoginAt: new Date() });
     await this.em.flush();
+    this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
+    await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
     return this.userTransformer.transform(user);
   }
 
@@ -168,6 +204,7 @@ export class UserService {
 
     this.userRepository.assign(user, restOfDto);
     await this.em.flush();
+    this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
     return this.userTransformer.transform(user);
   }
 
@@ -214,6 +251,8 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
     try {
+      this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
+      await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
       await this.em.removeAndFlush(user);
       return true;
     } catch (error) {
@@ -244,6 +283,7 @@ export class UserService {
 
     user.roles.set(roles);
     await this.em.flush();
+    this.cacheService.del(`${this.USER_CACHE_PREFIX}${userId}`);
     return this.userTransformer.transform(user);
   }
 
@@ -267,6 +307,7 @@ export class UserService {
 
     user.permissions.set(permissions);
     await this.em.flush();
+    this.cacheService.del(`${this.USER_CACHE_PREFIX}${userId}`);
     return this.userTransformer.transform(user);
   }
 

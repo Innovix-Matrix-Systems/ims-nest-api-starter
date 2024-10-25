@@ -1,8 +1,9 @@
 import { RedisModule } from '@nestjs-modules/ioredis';
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from './cache.service';
 
+@Global()
 @Module({
   imports: [
     RedisModule.forRootAsync({
