@@ -15,6 +15,7 @@ import { MiscModule } from './modules/misc/misc.module';
 import { PermissionModule } from './modules/permission/permission.module';
 import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
+import { CacheModule } from './modules/cache/cache.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { UserModule } from './modules/user/user.module';
     RoleModule,
     UserModule,
     AuthModule,
+    CacheModule,
   ],
   controllers: [AppController],
   providers: [

@@ -25,6 +25,17 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
+  redis:
+    image: redis:7-alpine
+    container_name: ims-nest-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes  # For data persistence
+    restart: unless-stopped
+
 
 volumes:
   postgres_data:
+  redis_data:
