@@ -3,12 +3,20 @@ import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { createMockCollection } from '../../mocks/collection.mock';
+import { CacheService } from '../cache/cache.service';
 import { MiscModule } from '../misc/misc.module';
 import { Permission } from '../permission/entities/permission.entity';
 import { Role } from '../role/entities/role.entity';
 import { User } from './entities/user.entity';
 import { UserTransformer } from './transformer/user.transformer';
 import { UserService } from './user.service';
+
+const mockCacheService = {
+  get: jest.fn(),
+  set: jest.fn(),
+  del: jest.fn(),
+  delAll: jest.fn(),
+};
 
 jest.mock('@mikro-orm/core', () => {
   const actual = jest.requireActual('@mikro-orm/core');
@@ -118,6 +126,11 @@ describe('UserService', () => {
       removeAndFlush: jest.fn(),
     };
 
+    mockCacheService.get.mockReset();
+    mockCacheService.set.mockReset();
+    mockCacheService.del.mockReset();
+    mockCacheService.delAll.mockReset();
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [MiscModule],
       providers: [
@@ -125,6 +138,7 @@ describe('UserService', () => {
         UserTransformer,
         { provide: getRepositoryToken(User), useValue: mockUserRepository }, // Provide the mock
         { provide: EntityManager, useValue: mockEntityManager },
+        { provide: CacheService, useValue: mockCacheService }, // Add mock CacheService
       ],
     }).compile();
 
@@ -133,6 +147,56 @@ describe('UserService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('Cache interactions', () => {
+    it('should try to get user from cache first when finding by id', async () => {
+      const userId = 1;
+      mockCacheService.get.mockResolvedValue(null);
+
+      await service.findOne(userId);
+
+      expect(mockCacheService.get).toHaveBeenCalledWith(`user:${userId}`);
+      expect(mockCacheService.set).toHaveBeenCalled();
+    });
+
+    it('should return cached user if available', async () => {
+      const userId = 1;
+      const cachedUser = {
+        id: userId,
+        name: 'Cached User',
+        email: 'cached@example.com',
+      };
+      mockCacheService.get.mockResolvedValue(cachedUser);
+
+      const result = await service.findOne(userId);
+
+      expect(result).toEqual(cachedUser);
+      expect(mockUserRepository.findOne).not.toHaveBeenCalled();
+    });
+
+    it('should clear user cache when updating', async () => {
+      const userId = 10;
+      const updateUserDto = { isActive: false };
+
+      await service.update(userId, updateUserDto);
+
+      expect(mockCacheService.del).toHaveBeenCalledWith(`user:${userId}`);
+    });
+
+    it('should clear paginated cache when creating new user', async () => {
+      const createUserDto = {
+        email: 'test@example.com',
+        name: 'Test User',
+        password: 'password123',
+        isActive: true,
+        roles: [2],
+      };
+
+      await service.create(createUserDto);
+
+      expect(mockCacheService.delAll).toHaveBeenCalledWith('user-paginated*');
+    });
   });
 
   it('should create a new user', async () => {

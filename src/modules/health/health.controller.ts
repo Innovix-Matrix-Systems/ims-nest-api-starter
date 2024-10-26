@@ -8,6 +8,7 @@ import {
   MemoryHealthIndicator,
   MikroOrmHealthIndicator,
 } from '@nestjs/terminus';
+import { RedisHealthIndicator } from './redis-health-indicator.service';
 
 @Controller('health')
 export class HealthController {
@@ -18,6 +19,7 @@ export class HealthController {
     private db: MikroOrmHealthIndicator,
     private disk: DiskHealthIndicator,
     private memory: MemoryHealthIndicator,
+    private redis: RedisHealthIndicator,
   ) {}
 
   @Get()
@@ -31,6 +33,7 @@ export class HealthController {
       () => this.db.pingCheck('database'),
       () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
       () => this.memory.checkRSS('memory_rss', 150 * 1024 * 1024),
+      () => this.redis.isHealthy('redis'),
     ]);
   }
 }
