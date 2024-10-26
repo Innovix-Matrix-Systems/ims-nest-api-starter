@@ -1,4 +1,5 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { RedisModule } from '@nestjs-modules/ioredis';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -8,6 +9,7 @@ import { AppController } from './app.controller';
 import { CreateModuleCommand } from './commands/create-module.command';
 import { XSecureInstallCommand } from './commands/xsecurity.command';
 import mikroOrmConfig from './config/mikro-orm.config';
+import redisConfig from './config/redis.config';
 import { XSecurityMiddleware } from './middlewares/xsecurity.middleware';
 import { AuthModule } from './modules/auth/auth.module';
 import { CacheModule } from './modules/cache/cache.module';
@@ -39,6 +41,11 @@ import { UserModule } from './modules/user/user.module';
           limit: configService.get<number>('THROTTLE_LIMIT'),
         },
       ],
+    }),
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => redisConfig(configService),
+      inject: [ConfigService],
     }),
     CommandModule,
     HealthModule,
