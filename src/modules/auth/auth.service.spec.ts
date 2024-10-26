@@ -3,12 +3,21 @@ import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { CacheModule } from '../cache/cache.module';
+import { CacheService } from '../cache/cache.service';
 import { MiscModule } from '../misc/misc.module';
 import { User } from '../user/entities/user.entity';
 import { UserTransformer } from '../user/transformer/user.transformer';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
+
+const mockCacheService = {
+  get: jest.fn(),
+  set: jest.fn(),
+  del: jest.fn(),
+  delAll: jest.fn(),
+};
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -61,6 +70,7 @@ describe('AuthService', () => {
           signOptions: { expiresIn: '1h' },
         }),
         MiscModule,
+        CacheModule,
       ],
       providers: [
         AuthService,
@@ -75,6 +85,10 @@ describe('AuthService', () => {
         { provide: ConfigService, useValue: mockConfigService },
         { provide: EntityManager, useValue: mockEntityManager },
         { provide: getRepositoryToken(User), useValue: mockUserRepository },
+        {
+          provide: CacheService,
+          useValue: mockCacheService,
+        },
       ],
     }).compile();
 
