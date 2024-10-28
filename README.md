@@ -6,19 +6,27 @@
 
 ## About this project
 
-`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications. This starter includes authentication, authorization, user management, role management, and role/permission-based access. Additionally, with the added security layer of XSECURITY, your APIs are safeguarded against unauthorized access, ensuring enhanced protection for your system.
+`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications.
+
+### Key Features
+
+- **Authentication**: JWT-based token authentication for secure access.
+- **Authorization**: Role- and permission-based access control to manage user privileges.
+- **Caching Support**: Integrated Redis caching for enhanced performance.
+- **Database Management**: MikroORM setup with PostgreSQL for efficient data handling.
+- **XSECURITY**: An added security layer that safeguards APIs against unauthorized access, ensuring data protection and integrity.
 
 ## Getting Started Guide Without Docker
 
 1. **Choose Your Local Development Tool:**
 
-   Select your preferred local development tool, such as [Docker](https://www.docker.com/), [Laragon](https://github.com/leokhoa/laragon), [Dbngin](https://dbngin.com/), or any other tool that suits your needs.
+   Select your preferred local development tool, such as [Dbngin](https://dbngin.com/)(comes with postgresql and redis) or any other tool that suits your needs.
 
    ### Version Requirements
 
    - Node.js version 18+
    - PostgreSQL 16+
-   - MikroORM for database interaction
+   - Redis 7+
 
 2. **Configure Your Environment:**
 
@@ -52,6 +60,15 @@
    DB_NAME=ims-nest
    DB_USERNAME=postgres
    DB_PASSWORD=
+   ```
+
+   You can ignore this if you are using Docker (see the Docker section).
+
+   You also need to set up your Redis server:
+
+   ```bash
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
    ```
 
    You can ignore this if you are using Docker (see the Docker section).
@@ -111,6 +128,12 @@
 
     the Api should be running at `.env.docker` file (`APP_PORT`)(8000) by default.
 
+    You can also use `docker-compose up -d` to start the application in the background.
+
+    You can also use `docker-compose logs -f` to follow the logs of the application.
+
+    you can also use `docker-compose up --build` to build the image and start the application.
+
 3.  **Run Migrations and Seed Data**
 
     If you need to run database migrations and seed initial data, you can enter the application container with the following command:
@@ -130,6 +153,7 @@
 
 4.  **Git hook for Check**
     You can use Husky to manage git hooks:
+    go to root directory of your project, then run the following command:
 
     ```bash
     npx husky install
@@ -158,6 +182,9 @@ If everything is set up correctly, you should see a response like this:
     },
     "memory_rss": {
       "status": "up"
+    },
+    "redis": {
+      "status": "up"
     }
   },
   "error": {},
@@ -172,6 +199,9 @@ If everything is set up correctly, you should see a response like this:
       "status": "up"
     },
     "memory_rss": {
+      "status": "up"
+    },
+    "redis": {
       "status": "up"
     }
   }
@@ -264,9 +294,9 @@ You can create custom CLI commands tailored to your specific needs using the [ne
 This project already includes integration with [nestjs-command](https://www.npmjs.com/package/nestjs-command) package.
 For reference, check out the `xsecurity` command implemented in [src/commands/xsecurity.command.ts](https://github.com/Innovix-Matrix-Systems/ims-nest-api-starter/blob/main/src/commands/xsecurity.command.ts).
 
-## Custom Module Creation Command
+### Custom Module Creation Command
 
-This project includes a custom script to generate a new NestJS module with a well-organized folder structure.
+This project includes a custom command to generate a new NestJS module with a well-organized folder structure.
 
 ### What this command does:
 
@@ -295,6 +325,7 @@ This project includes a custom script to generate a new NestJS module with a wel
 - [@AHS12](https://www.github.com/AHS12)
 
 ## Contributors
+
 <!-- readme: contributors -start -->
 <table>
 	<tbody>
@@ -327,6 +358,6 @@ This project includes a custom script to generate a new NestJS module with a wel
 
 ## License
 
-This project is brought to you by Innovix Matrix System and is released as open-source software under the [MIT license](https://opensource.org/licenses/MIT).
+This project is brought to you by [Innovix Matrix System](https://innovixmatrixsystem.com/) and is released as open-source software under the [MIT license](https://opensource.org/licenses/MIT).
 
 Feel free to use, modify, and distribute this starter project under the MIT license terms. Contributions are welcome to improve this template!
