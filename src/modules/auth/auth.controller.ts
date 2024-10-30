@@ -8,12 +8,17 @@ import {
 } from '@nestjs/common';
 import { BaseController } from '../../common/controllers/base.controller';
 import { ValidationExceptionFilter } from '../../common/filters/validation-exception.filter';
+import { EmailService } from '../email/email.service';
+import { EmailConfig } from '../email/enums/email.enum';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController extends BaseController {
-  constructor(private readonly authService: AuthService) {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly emailService: EmailService,
+  ) {
     super();
   }
 
@@ -24,6 +29,16 @@ export class AuthController extends BaseController {
       loginDto.email,
       loginDto.password,
     );
+    //send login alert email
+    await this.emailService.sendEmail({
+      key: EmailConfig.SEND_LOGIN_ALERT_EMAIL.toString(),
+      to: authData.email,
+      subject: 'Login Alert',
+      options: {
+        name: authData.name,
+        loginAt: new Date(),
+      },
+    });
     return this.sendSuccessResponse(
       authData,
       'Logged in successfully',

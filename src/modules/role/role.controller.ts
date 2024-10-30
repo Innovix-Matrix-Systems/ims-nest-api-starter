@@ -11,12 +11,12 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { BaseController } from '../../common/controllers/base.controller';
+import { Permissions } from '../../common/decorators/permissions.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionGuard } from '../../common/guards/permission.guard';
-import { Permissions } from '../../common/decorators/permissions.decorator';
+import { PermissionName } from '../permission/enums/permission.enum';
 import { CreateRoleDto } from './dto/role-create.dto';
 import { RoleService } from './role.service';
-import { PermissionName } from '../../enums/permission.enum';
 
 @Controller('role')
 export class RoleController extends BaseController {

@@ -1,6 +1,7 @@
 import { BadRequestException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Response } from 'express';
+import { EmailService } from '../email/email.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -8,10 +9,15 @@ import { LoginDto } from './dto/login.dto';
 describe('AuthController', () => {
   let controller: AuthController;
   let authService: jest.Mocked<AuthService>;
+  let emailService: jest.Mocked<EmailService>;
 
   beforeEach(async () => {
     const mockAuthService = {
       login: jest.fn(),
+    };
+
+    const mockEmailService = {
+      sendEmail: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -21,11 +27,16 @@ describe('AuthController', () => {
           provide: AuthService,
           useValue: mockAuthService,
         },
+        {
+          provide: EmailService,
+          useValue: mockEmailService,
+        },
       ],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
     authService = module.get(AuthService);
+    emailService = module.get(EmailService);
   });
 
   it('should be defined', () => {
@@ -61,6 +72,15 @@ describe('AuthController', () => {
         loginDto.email,
         loginDto.password,
       );
+      expect(emailService.sendEmail).toHaveBeenCalledWith({
+        key: expect.any(String),
+        to: mockAuthData.email,
+        subject: 'Login Alert',
+        options: {
+          name: mockAuthData.name,
+          loginAt: expect.any(Date),
+        },
+      });
       expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
       expect(mockResponse.json).toHaveBeenCalledWith({
         data: mockAuthData,
