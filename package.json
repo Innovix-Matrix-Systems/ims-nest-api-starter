@@ -4,7 +4,7 @@
   "description": "the Nest API starter of innovix Matrix System",
   "author": "Azizul Hakim ",
   "private": true,
-  "license": "MIT",
+  "license": "CC0-1.0",
   "scripts": {
     "build": "nest build && copyfiles -u 1 src/**/*.hbs dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
