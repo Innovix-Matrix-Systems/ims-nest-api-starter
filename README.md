@@ -360,6 +360,6 @@ This project includes a custom command to generate a new NestJS module with a we
 
 ## License
 
-This project is brought to you by [Innovix Matrix System](https://innovixmatrixsystem.com/) and is released as open-source software under the [MIT license](https://opensource.org/licenses/MIT).
+This project is brought to you by [Innovix Matrix System](https://innovixmatrixsystem.com/) and is released as open-source software under the [CC0 1.0 License](https://github.com/Innovix-Matrix-Systems/ims-nest-api-starter/blob/main/LICENSE).
 
-Feel free to use, modify, and distribute this starter project under the MIT license terms. Contributions are welcome to improve this template!
+Feel free to use, modify, and distribute this starter project under the CC0 1.0 license terms. Contributions are welcome to improve this template!
