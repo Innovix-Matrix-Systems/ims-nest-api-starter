@@ -6,7 +6,7 @@
 
 ## About this project
 
-`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications.
+`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/), [BullMQ](https://bullmq.io/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications.
 
 ### Key Features
 
@@ -14,6 +14,8 @@
 - **Authorization**: Role- and permission-based access control to manage user privileges.
 - **Caching Support**: Integrated Redis caching for enhanced performance.
 - **Database Management**: MikroORM setup with PostgreSQL for efficient data handling.
+- **Queue Management**: BullMQ for asynchronous tasks and event-driven architecture.
+- **Email Notification**: Send emails using [Nodemailer](https://nodemailer.com/) with BullMQ asynchronously.
 - **XSECURITY**: An added security layer that safeguards APIs against unauthorized access, ensuring data protection and integrity.
 
 ## Getting Started Guide Without Docker

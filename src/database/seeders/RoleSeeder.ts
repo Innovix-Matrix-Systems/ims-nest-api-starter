@@ -1,6 +1,6 @@
 import type { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { RoleName } from '../../enums/role.enum';
+import { RoleName } from '../../modules/role/enums/role.enum';
 import { Permission } from '../../modules/permission/entities/permission.entity';
 import { Role } from '../../modules/role/entities/role.entity';
 

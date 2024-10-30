@@ -45,10 +45,9 @@ export class UserService {
     createUserDto.password = await this.passwordService.hashPassword(
       createUserDto.password,
     );
-    const roleIds = createUserDto.roles.filter(
+    createUserDto.roles = createUserDto.roles.filter(
       (roleId) => !this.UNASSIGNABLE_ROLE_IDS.includes(roleId),
     );
-    createUserDto.roles = roleIds;
     const user = this.userRepository.create(createUserDto);
     await this.em.persistAndFlush(user);
     await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
@@ -112,8 +111,7 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<Partial<User> | null> {
-    const user = await this.userRepository.findOne({ email });
-    return user; // not need to call instanceToPlain as we need password in response
+    return await this.userRepository.findOne({ email });
   }
 
   async findByEmailWithRole(
@@ -175,7 +173,7 @@ export class UserService {
     delete updateUserDto.roles;
     this.userRepository.assign(user, updateUserDto);
     await this.em.flush();
-    this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
+    await this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
     return this.userTransformer.transform(user);
   }
 
@@ -186,7 +184,7 @@ export class UserService {
     }
     this.userRepository.assign(user, { lastLoginAt: new Date() });
     await this.em.flush();
-    this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
+    await this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
     await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
     return this.userTransformer.transform(user);
   }
@@ -204,7 +202,7 @@ export class UserService {
 
     this.userRepository.assign(user, restOfDto);
     await this.em.flush();
-    this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
+    await this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
     return this.userTransformer.transform(user);
   }
 
@@ -251,7 +249,7 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
     try {
-      this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
+      await this.cacheService.del(`${this.USER_CACHE_PREFIX}${id}`);
       await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
       await this.em.removeAndFlush(user);
       return true;
@@ -283,7 +281,7 @@ export class UserService {
 
     user.roles.set(roles);
     await this.em.flush();
-    this.cacheService.del(`${this.USER_CACHE_PREFIX}${userId}`);
+    await this.cacheService.del(`${this.USER_CACHE_PREFIX}${userId}`);
     return this.userTransformer.transform(user);
   }
 
@@ -307,7 +305,7 @@ export class UserService {
 
     user.permissions.set(permissions);
     await this.em.flush();
-    this.cacheService.del(`${this.USER_CACHE_PREFIX}${userId}`);
+    await this.cacheService.del(`${this.USER_CACHE_PREFIX}${userId}`);
     return this.userTransformer.transform(user);
   }
 

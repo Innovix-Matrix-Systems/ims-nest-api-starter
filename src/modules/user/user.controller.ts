@@ -20,7 +20,7 @@ import { Permissions } from '../../common/decorators/permissions.decorator';
 import { ValidationExceptionFilter } from '../../common/filters/validation-exception.filter';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionGuard } from '../../common/guards/permission.guard';
-import { PermissionName } from '../../enums/permission.enum';
+import { PermissionName } from '../permission/enums/permission.enum';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PermissionAssignDto } from './dto/permission-assign.dto';
