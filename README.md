@@ -6,7 +6,7 @@
 
 ## About this project
 
-`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/), [BullMQ](https://bullmq.io/) and [MikroORM](https://mikro-orm.io/) designed for scalable applications.
+`ims-nest-api-starter` is a backend API starter template using [NestJS](https://nestjs.com/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/), [BullMQ](https://bullmq.io/), [MikroORM](https://mikro-orm.io/) and [XSECURITY](https://www.npmjs.com/package/nestjs-xsecurity) designed for scalable applications.
 
 ### Key Features
 
@@ -16,7 +16,7 @@
 - **Database Management**: MikroORM setup with PostgreSQL for efficient data handling.
 - **Queue Management**: BullMQ for asynchronous tasks and event-driven architecture.
 - **Email Notification**: Send emails using [Nodemailer](https://nodemailer.com/) with BullMQ asynchronously.
-- **XSECURITY**: An added security layer that safeguards APIs against unauthorized access, ensuring data protection and integrity.
+- **XSECURITY**: [XSECURITY](https://www.npmjs.com/package/nestjs-xsecurity) is an added security layer that safeguards APIs against unauthorized access, ensuring data protection and integrity.
 
 ## Getting Started Guide Without Docker
 
@@ -220,36 +220,17 @@ npm run test
 
 ## Xsecurity Setup
 
-IMS introduces an additional layer of security, enhancing the API's reliability and resilience. With this system, only applications possessing a shared XSECURITY_TOKEN can send API requests to the server; others will be blocked. To get started, follow the guide below.
+To ensure the security of your application, we have integrated [XSECURITY](https://www.npmjs.com/package/nestjs-xsecurity) which is a security layer that safeguards APIs against unauthorized access by token validation, rate limiting. here is the [XSECURITY Guide](https://github.com/AHS12/nestjs-xsecurity/wiki).
 
-Getting Started
-By default, XSecure is disabled! To enable it, set the XSECURITY_ENABLED value to true in your .env file:
-
-```bash
-XSECURITY_ENABLED=true
-```
-
-Other wise it will be disabled.
-
-Installation
-Execute the following command to set up XSECURITY:
+for quick start, you can run the following command:
 
 ```bash
-npm run xsecurity:install
+npx nestjs-xsecurity install
 ```
-
-This command generates a secret for your application and updates your .env file with the `XSECURITY_SECRET` field.
-
-After running the command, you will receive output similar to this:
-
-```bash
-Generated secret: N+6WQq7RjqvE+KhMRFDtk1n09M98lBAb/P/8j/I3w/7ibNzgbJeg2a+gBjNpPbMgyXSgq0sebXzYwPwnFSmleg==
-XSECURITY_SECRET key has been updated in the .env file.
-```
-
-Use this secret in your frontend or mobile app to generate a short-lived XSecure token, which will be verified by the backend server.
-
-For more information on how to use XSECURITY, refer to the [XSECURITY Guide](https://github.com/Innovix-Matrix-Systems/ims-laravel-api-starter/wiki/XSECURE-setup).
+This command will:
+- Generate a secure random secret
+- Set up required environment variables
+- update the existing `.env` file with the new environment variables
 
 ## Extra CLI Commands
 
@@ -294,7 +275,7 @@ nest generate --help
 
 You can create custom CLI commands tailored to your specific needs using the [nestjs-command](https://www.npmjs.com/package/nestjs-command) package.
 This project already includes integration with [nestjs-command](https://www.npmjs.com/package/nestjs-command) package.
-For reference, check out the `xsecurity` command implemented in [src/commands/xsecurity.command.ts](https://github.com/Innovix-Matrix-Systems/ims-nest-api-starter/blob/main/src/commands/xsecurity.command.ts).
+For reference, check out the `create-module` command implemented in [src/commands/create-module.command.ts](https://github.com/Innovix-Matrix-Systems/ims-nest-api-starter/blob/main/src/commands/create-module.command.ts).
 
 ### Custom Module Creation Command
 
