@@ -52,7 +52,12 @@ export class XsecurityConfig {
           ),
         ),
       },
-      exclude: ['/health', '/api/v1/ping'],
+      exclude: [
+        '/health',
+        '/api/v1/ping',
+        '/auth/google',
+        '/auth/google/callback',
+      ],
     };
   }
 }

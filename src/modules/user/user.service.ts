@@ -12,6 +12,7 @@ import { PasswordService } from '../misc/password.service';
 import { Permission } from '../permission/entities/permission.entity';
 import { Role } from '../role/entities/role.entity';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { CreateOauthUserDto } from './dto/create-oauth-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ProfileUpdateDto } from './dto/profile-update.dto';
 import { ChangeSelfPasswordDto } from './dto/reset-self-password.dto';
@@ -49,6 +50,18 @@ export class UserService {
       (roleId) => !this.UNASSIGNABLE_ROLE_IDS.includes(roleId),
     );
     const user = this.userRepository.create(createUserDto);
+    await this.em.persistAndFlush(user);
+    await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
+    return this.userTransformer.transform(user);
+  }
+
+  async createOauthUser(
+    createOauthUserDto: CreateOauthUserDto,
+  ): Promise<Partial<UserResponse>> {
+    createOauthUserDto.roles = createOauthUserDto.roles.filter(
+      (roleId) => !this.UNASSIGNABLE_ROLE_IDS.includes(roleId),
+    );
+    const user = this.userRepository.create(createOauthUserDto);
     await this.em.persistAndFlush(user);
     await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
     return this.userTransformer.transform(user);

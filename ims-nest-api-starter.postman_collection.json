@@ -12,10 +12,16 @@
 			"name": "Health",
 			"item": [
 				{
-					"name": "healthz",
+					"name": "health",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "X-SECURITY-TOKEN",
+								"value": "eyJleHBpcnkiOjE3MjkyNzc1MDV9.54e13acb80657718fcf9f31075890383ee49e7dfb13e25ffb1b42ac5fbb89324",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{base_url}}/health",
 							"host": [
@@ -53,6 +59,78 @@
 		{
 			"name": "Auth",
 			"item": [
+				{
+					"name": "OAuth",
+					"item": [
+						{
+							"name": "google",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/google",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"google"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "google callback",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/google/callback",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"google",
+										"callback"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login by google user id",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test Name\",\r\n    \"googleId\": \"106475344289988\",\r\n    \"email\": \"test@test.com\",\r\n    \"accessToken\": \"ya29.a0AeDClZCSARtFggx-4ypKG6mLJdlu4M-IkQBn7qa0JgvhM9xr7hFRvE8IqoRBmNHpIg3FMZyOQE5-dob2Y9aPHQ3UgULShwHku7S1aJxAPDPxGuviCdbfYQDi6yBueAMK6fjVGhlpfQ95EzRmWHjWvqj2zdlc6UsB4GNi6PKiaCgYKAU0SARESFQHGX2MiK_HWDVl4qv3Q0hjko9X_Pw0175\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/google/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"google",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
 				{
 					"name": "login",
 					"request": {

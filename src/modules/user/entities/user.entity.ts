@@ -27,7 +27,7 @@ export class User {
   @Unique()
   email: string;
 
-  @Property()
+  @Property({ nullable: true })
   @Exclude()
   password: string;
 
@@ -42,6 +42,10 @@ export class User {
 
   @Property({ nullable: true })
   lastLoginAt: Date;
+
+  @Property({ nullable: true })
+  @Exclude()
+  googleId: string;
 
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
