@@ -214,6 +214,21 @@ describe('UserService', () => {
     expect(user.isActive).toEqual(createUserDto.isActive);
   });
 
+  it('should create a new oauth user', async () => {
+    const createOauthUserDto = {
+      email: '1q3U8@example.com',
+      name: 'John Doe',
+      googleId: '123456789',
+      isActive: true,
+      roles: [2],
+    };
+    const user = await service.createOauthUser(createOauthUserDto);
+    expect(mockUserRepository.create).toHaveBeenCalledWith(createOauthUserDto);
+    expect(user.email).toEqual(createOauthUserDto.email);
+    expect(user.name).toEqual(createOauthUserDto.name);
+    expect(user.isActive).toEqual(createOauthUserDto.isActive);
+  });
+
   it('should find all users', async () => {
     const params: FilterWithPaginationParams = {
       page: 1,

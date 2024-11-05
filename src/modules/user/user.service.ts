@@ -12,6 +12,7 @@ import { PasswordService } from '../misc/password.service';
 import { Permission } from '../permission/entities/permission.entity';
 import { Role } from '../role/entities/role.entity';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { CreateOauthUserDto } from './dto/create-oauth-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ProfileUpdateDto } from './dto/profile-update.dto';
 import { ChangeSelfPasswordDto } from './dto/reset-self-password.dto';
@@ -25,6 +26,15 @@ export class UserService {
   private UNASSIGNABLE_ROLE_IDS = [1];
   // unchangeable user ids (ex: SuperAdmin)
   private UNCHANGEABLE_USER_IDS = [1];
+
+  // cache keys
+  private USER_CACHE_PREFIX = 'user:';
+  private USER_CACHE_DEFAULT_TTL = 3600 * 24;
+  private USER_PAGINATED_CACHE_PREFIX = 'user-paginated';
+  private USER_PAGINATED_CACHE_DEFAULT_TTL = 600;
+  private USER_PERMISSIONS_CACHE_PREFIX = 'user-permissions:';
+  private USER_PERMISSIONS_CACHE_TTL = 3600;
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
@@ -35,11 +45,6 @@ export class UserService {
     private readonly userTransformer: UserTransformer,
   ) {}
 
-  private USER_CACHE_PREFIX = 'user:';
-  private USER_CACHE_DEFAULT_TTL = 3600 * 24;
-  private USER_PAGINATED_CACHE_PREFIX = 'user-paginated';
-  private USER_PAGINATED_CACHE_DEFAULT_TTL = 600;
-
   // Create a new user
   async create(createUserDto: CreateUserDto): Promise<Partial<UserResponse>> {
     createUserDto.password = await this.passwordService.hashPassword(
@@ -49,6 +54,18 @@ export class UserService {
       (roleId) => !this.UNASSIGNABLE_ROLE_IDS.includes(roleId),
     );
     const user = this.userRepository.create(createUserDto);
+    await this.em.persistAndFlush(user);
+    await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
+    return this.userTransformer.transform(user);
+  }
+
+  async createOauthUser(
+    createOauthUserDto: CreateOauthUserDto,
+  ): Promise<Partial<UserResponse>> {
+    createOauthUserDto.roles = createOauthUserDto.roles.filter(
+      (roleId) => !this.UNASSIGNABLE_ROLE_IDS.includes(roleId),
+    );
+    const user = this.userRepository.create(createOauthUserDto);
     await this.em.persistAndFlush(user);
     await this.cacheService.delAll(`${this.USER_PAGINATED_CACHE_PREFIX}*`);
     return this.userTransformer.transform(user);
@@ -282,6 +299,9 @@ export class UserService {
     user.roles.set(roles);
     await this.em.flush();
     await this.cacheService.del(`${this.USER_CACHE_PREFIX}${userId}`);
+    await this.cacheService.del(
+      `${this.USER_PERMISSIONS_CACHE_PREFIX}${userId}`,
+    );
     return this.userTransformer.transform(user);
   }
 
@@ -306,10 +326,17 @@ export class UserService {
     user.permissions.set(permissions);
     await this.em.flush();
     await this.cacheService.del(`${this.USER_CACHE_PREFIX}${userId}`);
+    await this.cacheService.del(
+      `${this.USER_PERMISSIONS_CACHE_PREFIX}${userId}`,
+    );
     return this.userTransformer.transform(user);
   }
 
   async getUserPermissions(userId: number): Promise<string[]> {
+    const cachedPermissions = await this.cacheService.get<string[]>(
+      `${this.USER_PERMISSIONS_CACHE_PREFIX}${userId}`,
+    );
+    if (cachedPermissions) return cachedPermissions;
     const user = await this.userRepository.findOne(
       { id: userId },
       {
@@ -317,39 +344,38 @@ export class UserService {
       },
     );
 
-    const userPermissions = user.permissions.getItems();
-    const rolePermissions = user.roles
-      .getItems()
-      .flatMap((role) => role.permissions.getItems());
-    const combinedPermissions = [...userPermissions, ...rolePermissions];
-    const uniquePermissions = Array.from(
-      new Set(combinedPermissions.map((permission) => permission.id)),
-    ).map((id) =>
-      combinedPermissions.find((permission) => permission.id === id),
+    if (!user) return [];
+
+    const userPermissions = user?.permissions?.getItems() || [];
+    const rolePermissions =
+      user?.roles?.getItems()?.flatMap((role) => role.permissions.getItems()) ||
+      [];
+
+    const permissions = [
+      ...new Set(
+        [...userPermissions, ...rolePermissions].map(
+          (permission) => permission.name,
+        ),
+      ),
+    ];
+
+    this.cacheService.set(
+      `${this.USER_PERMISSIONS_CACHE_PREFIX}${userId}`,
+      permissions,
+      this.USER_PERMISSIONS_CACHE_TTL,
     );
-    return uniquePermissions.map((permission) => permission.name);
+
+    return permissions;
   }
 
   async hasPermissionTo(
     userId: number,
     permissionNames: string[],
   ): Promise<boolean> {
-    const user = await this.userRepository.findOne(
-      { id: userId },
-      {
-        populate: ['roles', 'roles.permissions', 'permissions'],
-      },
-    );
-    if (!user) return false;
-    const userPermissions = user.permissions.getItems();
-    const rolePermissions = user.roles
-      .getItems()
-      .flatMap((role) => role.permissions.getItems());
-    const combinedPermissions = [...userPermissions, ...rolePermissions];
-
+    const userPermissions = await this.getUserPermissions(userId);
     return permissionNames.every((permissionName) => {
-      return combinedPermissions.some(
-        (permission) => permission.name === permissionName,
+      return userPermissions.some(
+        (permission) => permission === permissionName,
       );
     });
   }
