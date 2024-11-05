@@ -11,12 +11,14 @@
 ### Key Features
 
 - **Authentication**: JWT-based token authentication for secure access.
+- **OAuth Integration**: Comprehensive OAuth 2.0 authentication with Google, supporting both backend implementation and frontend token verification.
 - **Authorization**: Role- and permission-based access control to manage user privileges.
-- **Caching Support**: Integrated Redis caching for enhanced performance.
-- **Database Management**: MikroORM setup with PostgreSQL for efficient data handling.
-- **Queue Management**: BullMQ for asynchronous tasks and event-driven architecture.
-- **Email Notification**: Send emails using [Nodemailer](https://nodemailer.com/) with BullMQ asynchronously.
-- **XSECURITY**: [XSECURITY](https://www.npmjs.com/package/nestjs-xsecurity) is an added security layer that safeguards APIs against unauthorized access, ensuring data protection and integrity.
+- **Caching Layer**: Redis-powered caching implementation for optimized performance and response times.
+- **Database Integration**: Robust PostgreSQL integration using MikroORM with migration support and relationship management.
+-  **Queue System**: Scalable asynchronous processing using BullMQ for background tasks and event handling.
+- **Email Service**: Automated email delivery system utilizing [Nodemailer](https://nodemailer.com/) with templating support and queue integration.
+- **Security Framework**: [XSECURITY](https://www.npmjs.com/package/nestjs-xsecurity) provides Enhanced API protection through XSECURITY middleware, implementing rate limiting, XSS prevention, and request validation.
+.
 
 ## Getting Started Guide Without Docker
 

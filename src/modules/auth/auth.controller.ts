@@ -85,7 +85,6 @@ export class AuthController extends BaseController {
   }
 
   @Post('google/login')
-  @UseFilters(ValidationExceptionFilter)
   async googleFrontendLogin(
     @Body() googleLoginDto: GoogleLoginDto,
     @Res() res,

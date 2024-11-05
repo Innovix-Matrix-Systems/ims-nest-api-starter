@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { OAuth2Client } from 'google-auth-library';
+import { OAuth2Client, TokenInfo } from 'google-auth-library';
 import { PasswordService } from '../misc/password.service';
 import { RoleID } from '../role/enums/roleID.enum';
 import { UserService } from '../user/user.service';
@@ -123,7 +123,12 @@ export class AuthService {
 
   async verifyGoogleUser(googleLoginDto: GoogleLoginDto): Promise<void> {
     const { googleId, accessToken } = googleLoginDto;
-    const ticket = await this.googleClient.getTokenInfo(accessToken);
+    let ticket: TokenInfo;
+    try {
+      ticket = await this.googleClient.getTokenInfo(accessToken);
+    } catch {
+      throw new BadRequestException('AccessToken token is invalid');
+    }
 
     if (ticket.sub !== googleId) {
       throw new BadRequestException('GoogleId of the user is invalid');
